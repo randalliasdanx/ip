@@ -1,20 +1,10 @@
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Scanner;
-import java.util.Set;
 
 public class Randy {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         ArrayList<Task> arr = new ArrayList<>();
-        Set<String> s = new HashSet<>();
-        s.add("bye");
-        s.add("list");
-        s.add("mark");
-        s.add("unmark");
-        s.add("todo");
-        s.add("deadline");
-        s.add("event");
         System.out.println("_________________________________________________________");
         System.out.println("Hello! I'm Randy");
         System.out.println("What can I do for you?");
@@ -23,7 +13,7 @@ public class Randy {
         while (!input.equals("bye")) {
             input.trim();
             String[] split = input.split(" ");
-            if (split.length == 1 && !s.contains(split[0])) {
+            if (split.length == 1 && !Command.isValid(split[0])) {
                 System.out.println(
                         "\t" + "_____________________________________________________________________________");
                 System.out.println(
