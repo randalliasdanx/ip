@@ -1,9 +1,19 @@
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class Randy {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         Task[] arr = new Task[100];
+        Set<String> s = new HashSet<>();
+        s.add("bye");
+        s.add("list");
+        s.add("mark");
+        s.add("unmark");
+        s.add("todo");
+        s.add("deadline");
+        s.add("event");
         int index = 0;
         System.out.println("_________________________________________________________");
         System.out.println("Hello! I'm Randy");
@@ -12,7 +22,21 @@ public class Randy {
         String input = scanner.nextLine();
         while (!input.equals("bye")) {
             String[] split = input.split(" ");
-            if (input.equals("list")) {
+            if (split.length == 1 && !s.contains(split[0])) {
+                System.out.println(
+                        "\t" + "_____________________________________________________________________________");
+                System.out.println(
+                        "\t" + "I do not understand what you're trying to say, please try again! ~ From Randy");
+                System.out.println(
+                        "\t" + "_____________________________________________________________________________");
+            } else if (split.length == 1) {
+                System.out.println(
+                        "\t" + "_________________________________________________________________________________");
+                System.out.println(
+                        "\t" + "Please add the necessary description and information in the command! ~ From Randy");
+                System.out.println(
+                        "\t" + "_________________________________________________________________________________");
+            } else if (input.equals("list")) {
                 System.out.println("\t" + "_________________________________________________________");
                 System.out.println("\t" + "Here are the tasks in your list:");
                 for (int i = 0; i < index; i++) {
@@ -42,7 +66,6 @@ public class Randy {
                 System.out.println("\t" + "Got it. I've added this task: ");
                 System.out.println("\t" + t);
                 System.out.println("\t" + "Now you have " + index + " tasks in the list.");
-
             } else if (split[0].equals("deadline")) {
                 String rest = input.substring(9);
                 String[] parts = rest.split(" /by ");
