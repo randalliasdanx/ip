@@ -1,8 +1,8 @@
-public enum Command {
+public enum Prefix {
     BYE, LIST, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE;
 
     public static boolean isValid(String inp) {
-        for (Command cmd : Command.values()) {
+        for (Prefix cmd : Prefix.values()) {
             if (cmd.name().equalsIgnoreCase(inp)) {
                 return true;
             }
