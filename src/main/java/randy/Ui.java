@@ -1,6 +1,7 @@
+package randy;
+
 import java.util.Scanner;
 
-// handles printing stuff and reading user input
 public class Ui {
     private static final String LINE = "_________________________________________________________";
     private Scanner scanner;

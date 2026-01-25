@@ -1,21 +1,20 @@
+package randy;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-// parses user input and runs commands
 public class Parser {
     
-    // returns false when user types bye
     public static boolean parse(String input, TaskList arr, Ui ui) {
         String[] split = input.split(" ");
         String cmd = split[0];
 
-        // handle single word commands that arent valid
         if (split.length == 1 && !Prefix.isValid(cmd)) {
             ui.showUnknownCommand();
             return true;
         }
         
-        if (split.length == 1 && !cmd.equals("list")) {
+        if (split.length == 1 && !cmd.equals("list") && !cmd.equals("bye")) {
             ui.showMissingDescription();
             return true;
         }

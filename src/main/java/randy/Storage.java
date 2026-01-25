@@ -1,3 +1,5 @@
+package randy;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.BufferedWriter;
@@ -6,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-// handles loading and saving tasks to file
 public class Storage {
     private String path;
 
@@ -14,7 +15,6 @@ public class Storage {
         this.path = path;
     }
 
-    // make sure the folder exists before we try to save
     public void setupDirectory() {
         File outputFile = new File(path);
         File parentDir = outputFile.getParentFile();
@@ -23,7 +23,6 @@ public class Storage {
         }
     }
 
-    // load tasks from file
     public ArrayList<Task> load() throws IOException {
         ArrayList<Task> arr = new ArrayList<>();
         File file = new File(path);
@@ -49,7 +48,6 @@ public class Storage {
         return arr;
     }
 
-    // parse a line from the file into a task
     private Task parseLine(String line) {
         Task task = null;
         
@@ -67,7 +65,6 @@ public class Storage {
             task = new Event(description, from, to);
         }
 
-        // check if task was marked as done
         if (task != null) {
             String status = line.substring(4, 5);
             if (status.equals("X")) {
@@ -78,7 +75,6 @@ public class Storage {
         return task;
     }
 
-    // save all tasks to file
     public void save(TaskList arr) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(path, false))) {
             for (int i = 0; i < arr.size(); i++) {

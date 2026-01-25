@@ -1,3 +1,5 @@
+package randy;
+
 import java.io.IOException;
 
 public class Randy {
@@ -34,6 +36,6 @@ public class Randy {
     }
 
     public static void main(String[] args) {
-        new Randy("../data/storage.txt").run();
+        new Randy("./data/storage.txt").run();
     }
 }

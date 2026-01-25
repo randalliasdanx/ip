@@ -1,3 +1,5 @@
+package randy;
+
 import java.time.LocalDate;
 
 public class Task {
@@ -26,12 +28,7 @@ public class Task {
         this.isDone = false;
     }
 
-    /**
-     * Checks if this task occurs on the given date.
-     * @param date The date to check against
-     * @return true if the task occurs on this date, false otherwise
-     */
     public boolean occursOn(LocalDate date) {
-        return false; // Base Task doesn't have a date
+        return false;
     }
 }

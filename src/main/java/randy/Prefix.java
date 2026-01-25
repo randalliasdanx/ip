@@ -1,3 +1,5 @@
+package randy;
+
 public enum Prefix {
     BYE, LIST, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE, ON;
 
