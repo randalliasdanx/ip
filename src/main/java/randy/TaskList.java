@@ -1,7 +1,8 @@
+package randy;
+
 import java.util.ArrayList;
 import java.time.LocalDate;
 
-// wrapper class for the task arraylist
 public class TaskList {
     private ArrayList<Task> arr;
 
@@ -41,7 +42,6 @@ public class TaskList {
         return t;
     }
 
-    // find tasks on a specific date
     public TaskList getTasksOn(LocalDate date) {
         TaskList results = new TaskList();
         for (Task t : arr) {

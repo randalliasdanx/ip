@@ -1,20 +1,20 @@
+package randy;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class Event extends Task {
-    protected Object start; // Can be LocalDate or String
-    protected Object end;   // Can be LocalDate or String
+    protected Object start;
+    protected Object end;
 
     public Event(String description, String start, String end) {
         super(description);
-        // Try to parse start date
         try {
             this.start = LocalDate.parse(start);
         } catch (DateTimeParseException e) {
             this.start = start;
         }
-        // Try to parse end date
         try {
             this.end = LocalDate.parse(end);
         } catch (DateTimeParseException e) {
@@ -36,7 +36,6 @@ public class Event extends Task {
 
     @Override
     public boolean occursOn(LocalDate date) {
-        // Check if date falls within the event range (inclusive)
         if (start instanceof LocalDate && end instanceof LocalDate) {
             LocalDate startDate = (LocalDate) start;
             LocalDate endDate = (LocalDate) end;
