@@ -1,6 +1,13 @@
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.BufferedWriter;
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 public class Randy {
     private static ArrayList<Task> arr = new ArrayList<>();
@@ -85,15 +92,21 @@ public class Randy {
             } else if (split[0].equals("deadline")) {
                 String rest = input.substring(9);
                 String[] parts = rest.split(" /by ");
-                String description = parts[0];
-                String by = parts[1];
-                Task t = new Deadline(description, by);
-                arr.add(t);
-                System.out.println("\t" + "_________________________________________________________");
-                System.out.println("\t" + "Got it. I've added this task: ");
-                System.out.println("\t" + t);
-                System.out.println("\t" + "Now you have " + arr.size() + " tasks in the list.");
-                System.out.println("\t" + "_________________________________________________________");
+                if (parts.length != 2) {
+                    System.out.println("\t" + "_________________________________________________________");
+                    System.out.println("\t" + "Please insert a valid deadline (use: deadline <desc> /by <date>)");
+                    System.out.println("\t" + "_________________________________________________________");
+                } else {
+                    String description = parts[0];
+                    String by = parts[1];
+                    Task t = new Deadline(description, by);
+                    arr.add(t);
+                    System.out.println("\t" + "_________________________________________________________");
+                    System.out.println("\t" + "Got it. I've added this task: ");
+                    System.out.println("\t" + t);
+                    System.out.println("\t" + "Now you have " + arr.size() + " tasks in the list.");
+                    System.out.println("\t" + "_________________________________________________________");
+                }
             } else if (split[0].equals("event")) {
                 String rest = input.substring(6);
                 String[] parts = rest.split(" /from | /to ");
@@ -116,6 +129,29 @@ public class Randy {
                 System.out.println("\t" + t);
                 System.out.println("\t" + "Now you have " + arr.size() + " tasks in the list.");
                 System.out.println("\t" + "_________________________________________________________");
+            } else if (split[0].equals("on")) {
+                // Find tasks occurring on a specific date
+                try {
+                    LocalDate searchDate = LocalDate.parse(split[1]);
+                    System.out.println("\t" + "_________________________________________________________");
+                    System.out.println("\t" + "Tasks on " + searchDate + ":");
+                    int count = 0;
+                    for (int i = 0; i < arr.size(); i++) {
+                        Task t = arr.get(i);
+                        if (t.occursOn(searchDate)) {
+                            count++;
+                            System.out.println("\t" + count + ". " + t);
+                        }
+                    }
+                    if (count == 0) {
+                        System.out.println("\t" + "No tasks found on this date.");
+                    }
+                    System.out.println("\t" + "_________________________________________________________");
+                } catch (DateTimeParseException e) {
+                    System.out.println("\t" + "_________________________________________________________");
+                    System.out.println("\t" + "Please use yyyy-MM-dd format (e.g., on 2019-12-02)");
+                    System.out.println("\t" + "_________________________________________________________");
+                }
             } else {
                 System.out.println("\t" + "_________________________________________________________");
                 System.out.println("\t" + "added: " + input);

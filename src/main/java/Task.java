@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+
 public class Task {
     protected String description;
     protected boolean isDone;
@@ -22,5 +24,14 @@ public class Task {
 
     public void unmark() {
         this.isDone = false;
+    }
+
+    /**
+     * Checks if this task occurs on the given date.
+     * @param date The date to check against
+     * @return true if the task occurs on this date, false otherwise
+     */
+    public boolean occursOn(LocalDate date) {
+        return false; // Base Task doesn't have a date
     }
 }
