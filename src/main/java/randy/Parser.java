@@ -64,6 +64,10 @@ public class Parser {
             case "on":
                 doOn(split, arr, ui);
                 break;
+
+            case "find":
+                doFind(input, arr, ui);
+                break;
                 
             default:
                 Task t = new Task(input);
@@ -141,5 +145,15 @@ public class Parser {
         } catch (DateTimeParseException e) {
             ui.showError("Please use yyyy-MM-dd format (e.g., on 2019-12-02)");
         }
+    }
+
+    private static void doFind(String input, TaskList arr, Ui ui) {
+        String keyword = input.substring(5).trim();
+        if (keyword.isEmpty()) {
+            ui.showError("Please provide a keyword to search for.");
+            return;
+        }
+        TaskList results = arr.find(keyword);
+        ui.showFound(results);
     }
 }
