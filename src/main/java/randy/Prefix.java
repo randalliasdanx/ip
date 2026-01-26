@@ -1,7 +1,7 @@
 package randy;
 
 public enum Prefix {
-    BYE, LIST, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE, ON;
+    BYE, LIST, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE, ON, FIND;
 
     public static boolean isValid(String inp) {
         for (Prefix cmd : Prefix.values()) {

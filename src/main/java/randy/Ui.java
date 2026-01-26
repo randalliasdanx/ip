@@ -153,6 +153,23 @@ public class Ui {
     }
 
     /**
+     * Shows tasks matching the search keyword.
+     * @param results The matching tasks.
+     */
+    public void showFound(TaskList results) {
+        printLine();
+        System.out.println("\t" + "Here are the matching tasks in your list:");
+        if (results.size() == 0) {
+            System.out.println("\t" + "No matching tasks found.");
+        } else {
+            for (int i = 0; i < results.size(); i++) {
+                System.out.println("\t" + (i + 1) + ". " + results.get(i));
+            }
+        }
+        printLine();
+    }
+
+    /**
      * Closes the scanner.
      */
     public void close() {
