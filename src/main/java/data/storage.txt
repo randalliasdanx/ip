@@ -3,4 +3,3 @@
 [T][ ] 2105 Tutorial
 [T][ ] Callbridge update
 [D][X] finish callbridge (by: 6:00pm)
-[E][ ] dance (from: 2:00pm to: 6:00pm)
