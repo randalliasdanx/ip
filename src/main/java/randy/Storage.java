@@ -8,13 +8,23 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * Handles loading and saving tasks to a file.
+ */
 public class Storage {
     private String path;
 
+    /**
+     * Creates a Storage object with the specified file path.
+     * @param path The file path for storage.
+     */
     public Storage(String path) {
         this.path = path;
     }
 
+    /**
+     * Creates the parent directory if it doesn't exist.
+     */
     public void setupDirectory() {
         File outputFile = new File(path);
         File parentDir = outputFile.getParentFile();
@@ -23,6 +33,11 @@ public class Storage {
         }
     }
 
+    /**
+     * Loads tasks from the storage file.
+     * @return ArrayList of tasks loaded from file.
+     * @throws IOException If file cannot be read.
+     */
     public ArrayList<Task> load() throws IOException {
         ArrayList<Task> arr = new ArrayList<>();
         File file = new File(path);
@@ -75,6 +90,10 @@ public class Storage {
         return task;
     }
 
+    /**
+     * Saves all tasks to the storage file.
+     * @param arr The TaskList to save.
+     */
     public void save(TaskList arr) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(path, false))) {
             for (int i = 0; i < arr.size(); i++) {

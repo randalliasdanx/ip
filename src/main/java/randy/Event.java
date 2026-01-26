@@ -4,10 +4,19 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Represents an event with a start and end date/time.
+ */
 public class Event extends Task {
     protected Object start;
     protected Object end;
 
+    /**
+     * Creates an Event task.
+     * @param description Event description.
+     * @param start Start date/time.
+     * @param end End date/time.
+     */
     public Event(String description, String start, String end) {
         super(description);
         try {

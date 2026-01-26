@@ -3,8 +3,18 @@ package randy;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Handles parsing of user input and executes commands.
+ */
 public class Parser {
     
+    /**
+     * Parses user input and executes the corresponding command.
+     * @param input The user input string.
+     * @param arr The task list to operate on.
+     * @param ui The UI for displaying output.
+     * @return false if user wants to exit, true otherwise.
+     */
     public static boolean parse(String input, TaskList arr, Ui ui) {
         String[] split = input.split(" ");
         String cmd = split[0];
