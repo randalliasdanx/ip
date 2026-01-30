@@ -15,13 +15,13 @@ public class Randy {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        
+
         File outputFile = new File(path);
         File parentDir = outputFile.getParentFile();
         if (parentDir != null && !parentDir.exists()) {
             parentDir.mkdirs();
         }
-        
+
         System.out.println("_________________________________________________________");
         System.out.println("Hello! I'm Randy");
         loadTasksFromFile();
@@ -31,18 +31,19 @@ public class Randy {
             for (int i = 0; i < arr.size(); i++) {
                 System.out.println(arr.get(i));
             }
-            
+
             System.out.println("_________________________________________________________");
         }
 
         System.out.println("What can I do for you?");
         System.out.println("_________________________________________________________");
-        
+
         String input = scanner.nextLine();
         while (!input.equals("bye")) {
             input = input.trim();
             String[] split = input.split(" ");
-            
+
+            // Case to handle when the prefix is invalid
             if (split.length == 1 && !Prefix.isValid(split[0])) {
                 System.out.println(
                         "\t" + "_____________________________________________________________________________");
@@ -158,7 +159,7 @@ public class Randy {
                 arr.add(new Task(input));
                 System.out.println("\t" + "_________________________________________________________");
             }
-            
+
             input = scanner.nextLine();
         }
 
@@ -183,7 +184,7 @@ public class Randy {
     private static void loadTasksFromFile() {
         File file = new File(path);
         if (!file.exists()) {
-            return;  // Return if the file doesn't exist
+            return; // Return if the file doesn't exist
         }
 
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
@@ -201,24 +202,28 @@ public class Randy {
                 Task task = null;
                 if (line.startsWith("[T]")) {
                     // ToDo task: line starts with "[T]"
-                    String description = line.substring(6).trim();  // Skip "[T][ ]" and any extra whitespace
+                    String description = line.substring(6).trim(); // Skip "[T][ ]" and any extra whitespace
                     task = new ToDo(description);
                 } else if (line.startsWith("[D]")) {
                     // Deadline task: line starts with "[D]"
-                    String description = line.substring(6, line.indexOf(" (by:")).trim();  
-                    String by = line.substring(line.indexOf("(by:") + 5, line.indexOf(")")).trim();  // Extract the "by" date
+                    String description = line.substring(6, line.indexOf(" (by:")).trim();
+                    String by = line.substring(line.indexOf("(by:") + 5, line.indexOf(")")).trim(); // Extract the "by"
+                                                                                                    // date
                     task = new Deadline(description, by);
                 } else if (line.startsWith("[E]")) {
                     // Event task: line starts with "[E]"
-                    String description = line.substring(6, line.indexOf(" (from:")).trim();  // Get description before "(from:"
-                    String from = line.substring(line.indexOf("(from:") + 6, line.indexOf(" to:")).trim();  // Extract start time
-                    String to = line.substring(line.indexOf("to:") + 3, line.indexOf(")")).trim();  // Extract end time
+                    String description = line.substring(6, line.indexOf(" (from:")).trim(); // Get description before
+                                                                                            // "(from:"
+                    String from = line.substring(line.indexOf("(from:") + 6, line.indexOf(" to:")).trim(); // Extract
+                                                                                                           // start time
+                    String to = line.substring(line.indexOf("to:") + 3, line.indexOf(")")).trim(); // Extract end time
                     task = new Event(description, from, to);
                 }
 
-                // If the task was successfully created, check the status and mark it accordingly
+                // If the task was successfully created, check the status and mark it
+                // accordingly
                 if (task != null) {
-                    String status = line.substring(4, 5);  // Get the task status ("[ ]" or "[X]")
+                    String status = line.substring(4, 5); // Get the task status ("[ ]" or "[X]")
                     if (status.equals("X")) {
                         task.mark();
                     }
