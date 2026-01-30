@@ -1,3 +1,4 @@
+// Enum instantiated for command validity checking 
 public enum Prefix {
     BYE, LIST, MARK, UNMARK, TODO, DEADLINE, EVENT, DELETE, ON;
 
