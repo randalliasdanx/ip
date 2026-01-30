@@ -2,6 +2,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+// Class Description
 public class Deadline extends Task {
     protected Object by; // Store the deadline as LocalDate or String
 
@@ -9,7 +10,7 @@ public class Deadline extends Task {
     public Deadline(String description, String by) {
         super(description);
         try {
-            this.by = LocalDate.parse(by);  // Parse the date string to LocalDate
+            this.by = LocalDate.parse(by); // Parse the date string to LocalDate
         } catch (DateTimeParseException e) {
             this.by = by;
         }
