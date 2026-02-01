@@ -4,109 +4,67 @@ import java.util.ArrayList;
 import java.time.LocalDate;
 
 /**
- * Manages a list of tasks with add, delete, and search operations.
+ * Wrapper around ArrayList to manage tasks.
  */
 public class TaskList {
-    private ArrayList<Task> arr;
+    private ArrayList<Task> tasks;
 
-    /**
-     * Creates an empty TaskList.
-     */
     public TaskList() {
-        arr = new ArrayList<>();
+        tasks = new ArrayList<>();
     }
 
-    /**
-     * Creates a TaskList from an existing ArrayList.
-     * @param arr The ArrayList of tasks.
-     */
-    public TaskList(ArrayList<Task> arr) {
-        this.arr = arr;
+    public TaskList(ArrayList<Task> loadedTasks) {
+        this.tasks = loadedTasks;
     }
 
-    /**
-     * Adds a task to the list.
-     * @param t The task to add.
-     */
     public void add(Task t) {
-        arr.add(t);
+        tasks.add(t);
     }
 
-    /**
-     * Deletes and returns the task at the given index.
-     * @param index The 0-based index.
-     * @return The deleted task.
-     */
-    public Task delete(int index) {
-        return arr.remove(index);
+    public Task remove(int idx) {
+        return tasks.remove(idx);
     }
 
-    /**
-     * Gets the task at the given index.
-     * @param index The 0-based index.
-     * @return The task at that index.
-     */
-    public Task get(int index) {
-        return arr.get(index);
+    public Task get(int idx) {
+        return tasks.get(idx);
     }
 
-    /**
-     * Returns the number of tasks in the list.
-     * @return The size of the list.
-     */
     public int size() {
-        return arr.size();
+        return tasks.size();
     }
 
-    /**
-     * Marks a task as done.
-     * @param index The 0-based index.
-     * @return The marked task.
-     */
-    public Task markTask(int index) {
-        Task t = arr.get(index);
-        t.mark();
+    public Task setDone(int idx) {
+        Task t = tasks.get(idx);
+        t.setDone();
         return t;
     }
 
-    /**
-     * Marks a task as not done.
-     * @param index The 0-based index.
-     * @return The unmarked task.
-     */
-    public Task unmarkTask(int index) {
-        Task t = arr.get(index);
-        t.unmark();
+    public Task setUndone(int idx) {
+        Task t = tasks.get(idx);
+        t.setUndone();
         return t;
     }
 
-    /**
-     * Finds all tasks that occur on the given date.
-     * @param date The date to search for.
-     * @return TaskList containing matching tasks.
-     */
-    public TaskList getTasksOn(LocalDate date) {
-        TaskList results = new TaskList();
-        for (Task t : arr) {
-            if (t.occursOn(date)) {
-                results.add(t);
+    // filter by date
+    public TaskList filterByDate(LocalDate date) {
+        TaskList filtered = new TaskList();
+        for (Task t : tasks) {
+            if (t.isOnDate(date)) {
+                filtered.add(t);
             }
         }
-        return results;
+        return filtered;
     }
 
-    /**
-     * Finds all tasks containing the keyword in description.
-     * @param keyword The keyword to search for.
-     * @return TaskList containing matching tasks.
-     */
-    public TaskList find(String keyword) {
-        TaskList results = new TaskList();
-        for (Task t : arr) {
-            if (t.toString().toLowerCase().contains(keyword.toLowerCase())) {
-                results.add(t);
+    // search by keyword
+    public TaskList search(String keyword) {
+        TaskList matches = new TaskList();
+        for (Task t : tasks) {
+            String lower = t.toString().toLowerCase();
+            if (lower.contains(keyword.toLowerCase())) {
+                matches.add(t);
             }
         }
-        return results;
+        return matches;
     }
 }

@@ -5,52 +5,48 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 /**
- * Represents an event with a start and end date/time.
+ * Task that spans a time range.
  */
 public class Event extends Task {
-    protected Object start;
-    protected Object end;
+    private Object from;
+    private Object to;
 
-    /**
-     * Creates an Event task.
-     * @param description Event description.
-     * @param start Start date/time.
-     * @param end End date/time.
-     */
-    public Event(String description, String start, String end) {
-        super(description);
+    public Event(String desc, String from, String to) {
+        super(desc);
+        // parse dates if possible
         try {
-            this.start = LocalDate.parse(start);
+            this.from = LocalDate.parse(from);
         } catch (DateTimeParseException e) {
-            this.start = start;
+            this.from = from;
         }
         try {
-            this.end = LocalDate.parse(end);
+            this.to = LocalDate.parse(to);
         } catch (DateTimeParseException e) {
-            this.end = end;
+            this.to = to;
         }
     }
 
     @Override
     public String toString() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd yyyy");
-        String startStr = (start instanceof LocalDate) 
-            ? ((LocalDate) start).format(formatter) 
-            : start.toString();
-        String endStr = (end instanceof LocalDate) 
-            ? ((LocalDate) end).format(formatter) 
-            : end.toString();
-        return "[E]" + super.toString() + " (from: " + startStr + " to: " + endStr + ")";
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MMM dd yyyy");
+        String fromStr = (from instanceof LocalDate) 
+            ? ((LocalDate) from).format(fmt) 
+            : from.toString();
+        String toStr = (to instanceof LocalDate) 
+            ? ((LocalDate) to).format(fmt) 
+            : to.toString();
+        return "[E]" + super.toString() + " (from: " + fromStr + " to: " + toStr + ")";
     }
 
     @Override
-    public boolean occursOn(LocalDate date) {
-        if (start instanceof LocalDate && end instanceof LocalDate) {
-            LocalDate startDate = (LocalDate) start;
-            LocalDate endDate = (LocalDate) end;
-            return !date.isBefore(startDate) && !date.isAfter(endDate);
-        } else if (start instanceof LocalDate) {
-            return ((LocalDate) start).equals(date);
+    public boolean isOnDate(LocalDate d) {
+        // check if date falls within event range
+        if (from instanceof LocalDate && to instanceof LocalDate) {
+            LocalDate start = (LocalDate) from;
+            LocalDate end = (LocalDate) to;
+            return !d.isBefore(start) && !d.isAfter(end);
+        } else if (from instanceof LocalDate) {
+            return ((LocalDate) from).equals(d);
         }
         return false;
     }

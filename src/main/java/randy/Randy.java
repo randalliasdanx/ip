@@ -3,47 +3,47 @@ package randy;
 import java.io.IOException;
 
 /**
- * Main class for the Randy chatbot application.
- * Handles initialization and the main program loop.
+ * Randy - your friendly task manager bot.
  */
 public class Randy {
     private Storage storage;
-    private TaskList arr;
+    private TaskList tasks;
     private Ui ui;
 
-    /**
-     * Creates a new Randy chatbot instance.
-     * @param path File path for storing tasks.
-     */
-    public Randy(String path) {
+    public Randy(String filePath) {
         ui = new Ui();
-        storage = new Storage(path);
-        storage.setupDirectory();
+        storage = new Storage(filePath);
+        storage.init();
         
         try {
-            arr = new TaskList(storage.load());
+            tasks = new TaskList(storage.loadTasks());
         } catch (IOException e) {
-            ui.showLoadingError();
-            arr = new TaskList();
+            ui.printLoadError();
+            tasks = new TaskList();
         }
     }
 
-    /**
-     * Runs the main loop of the chatbot.
-     */
-    public void run() {
-        ui.showWelcome();
-        ui.showLoadedTasks(arr);
-        ui.showPrompt();
+    // for GUI - returns what Randy says back
+    public String getResponse(String input) {
+        String reply = Parser.processInput(input, tasks);
+        storage.writeToFile(tasks);
+        return reply;
+    }
 
-        String input = ui.readCommand();
-        while (Parser.parse(input, arr, ui)) {
-            input = ui.readCommand();
+    // CLI mode
+    public void run() {
+        ui.greet();
+        ui.printSavedTasks(tasks);
+        ui.askForInput();
+
+        String line = ui.read();
+        while (Parser.execute(line, tasks, ui)) {
+            line = ui.read();
         }
 
-        ui.showBye();
-        storage.save(arr);
-        ui.close();
+        ui.sayBye();
+        storage.writeToFile(tasks);
+        ui.shutdown();
     }
 
     public static void main(String[] args) {
