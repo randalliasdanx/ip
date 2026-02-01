@@ -3,176 +3,139 @@ package randy;
 import java.util.Scanner;
 
 /**
- * Handles all user interface operations - reading input and displaying output.
+ * Handles all the printing stuff.
  */
 public class Ui {
-    private static final String LINE = "_________________________________________________________";
-    private Scanner scanner;
+    private static final String DIVIDER = "____________________________________________________________";
+    private Scanner sc;
 
-    /**
-     * Creates a new Ui and initializes the scanner.
-     */
     public Ui() {
-        scanner = new Scanner(System.in);
+        sc = new Scanner(System.in);
     }
 
-    /**
-     * Reads and returns user input.
-     * @return The trimmed user input.
-     */
-    public String readCommand() {
-        return scanner.nextLine().trim();
+    public String read() {
+        return sc.nextLine().trim();
     }
 
-    public void printLine() {
-        System.out.println("\t" + LINE);
+    private void line() {
+        System.out.println("\t" + DIVIDER);
     }
 
-    /**
-     * Shows the welcome message.
-     */
-    public void showWelcome() {
-        System.out.println(LINE);
-        System.out.println("Hello! I'm Randy");
+    public void greet() {
+        System.out.println(DIVIDER);
+        System.out.println("yo! i'm Randy");
     }
 
-    /**
-     * Shows the goodbye message.
-     */
-    public void showBye() {
-        System.out.println(LINE);
-        System.out.println("Bye. Hope to see you again soon!");
-        System.out.println(LINE);
+    public void sayBye() {
+        System.out.println(DIVIDER);
+        System.out.println("peace out! see ya later");
+        System.out.println(DIVIDER);
     }
 
-    public void showPrompt() {
-        System.out.println("What can I do for you?");
-        System.out.println(LINE);
+    public void askForInput() {
+        System.out.println("whatcha need?");
+        System.out.println(DIVIDER);
     }
 
-    /**
-     * Shows tasks loaded from storage.
-     * @param arr The loaded tasks.
-     */
-    public void showLoadedTasks(TaskList arr) {
-        if (arr.size() > 0) {
-            System.out.println("Here are your tasks!");
-            System.out.println(LINE);
-            for (int i = 0; i < arr.size(); i++) {
-                System.out.println(arr.get(i));
+    public void printSavedTasks(TaskList tasks) {
+        if (tasks.size() > 0) {
+            System.out.println("found your saved tasks:");
+            System.out.println(DIVIDER);
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.println(tasks.get(i));
             }
-            System.out.println(LINE);
+            System.out.println(DIVIDER);
         }
     }
 
-    /**
-     * Shows an error message.
-     * @param msg The error message.
-     */
-    public void showError(String msg) {
-        printLine();
+    public void printError(String msg) {
+        line();
         System.out.println("\t" + msg);
-        printLine();
+        line();
     }
 
-    public void showUnknownCommand() {
-        printLine();
-        System.out.println("\t" + "I do not understand what you're trying to say, please try again! ~ From Randy");
-        printLine();
+    public void printUnknown() {
+        line();
+        System.out.println("\thuh? idk what that means bro");
+        line();
     }
 
-    public void showMissingDescription() {
-        printLine();
-        System.out.println("\t" + "Please add the necessary description and information in the command! ~ From Randy");
-        printLine();
+    public void printEmpty() {
+        line();
+        System.out.println("\tuh you forgot to add details");
+        line();
     }
 
-    /**
-     * Shows all tasks in the list.
-     * @param arr The task list to display.
-     */
-    public void showList(TaskList arr) {
-        printLine();
-        System.out.println("\t" + "Here are the tasks in your list:");
-        for (int i = 0; i < arr.size(); i++) {
-            System.out.println("\t" + (i + 1) + ". " + arr.get(i));
+    public void printList(TaskList tasks) {
+        line();
+        System.out.println("\there's what you got:");
+        for (int i = 0; i < tasks.size(); i++) {
+            System.out.println("\t" + (i + 1) + ". " + tasks.get(i));
         }
-        printLine();
+        line();
     }
 
-    public void showMarked(Task t) {
-        printLine();
-        System.out.println("\t" + "Nice! I've marked this task as done:");
+    public void printMarked(Task t) {
+        line();
+        System.out.println("\tnice! marked as done:");
         System.out.println("\t" + t);
-        printLine();
+        line();
     }
 
-    public void showUnmarked(Task t) {
-        printLine();
-        System.out.println("\t" + "OK, I've marked this task as not done yet:");
+    public void printUnmarked(Task t) {
+        line();
+        System.out.println("\tok unmarked this one:");
         System.out.println("\t" + t);
-        printLine();
+        line();
     }
 
-    /**
-     * Shows confirmation that a task was added.
-     * @param t The added task.
-     * @param size The new total number of tasks.
-     */
-    public void showAdded(Task t, int size) {
-        printLine();
-        System.out.println("\t" + "Got it. I've added this task: ");
+    public void printAdded(Task t, int total) {
+        line();
+        System.out.println("\tadded:");
         System.out.println("\t" + t);
-        System.out.println("\t" + "Now you have " + size + " tasks in the list.");
-        printLine();
+        System.out.println("\tyou now have " + total + " tasks");
+        line();
     }
 
-    public void showDeleted(Task t, int size) {
-        printLine();
-        System.out.println("\t" + "Noted. I've removed this task:");
+    public void printDeleted(Task t, int total) {
+        line();
+        System.out.println("\tdeleted:");
         System.out.println("\t" + t);
-        System.out.println("\t" + "Now you have " + size + " tasks in the list.");
-        printLine();
+        System.out.println("\tyou now have " + total + " tasks");
+        line();
     }
 
-    public void showTasksOn(TaskList results, String date) {
-        printLine();
-        System.out.println("\t" + "Tasks on " + date + ":");
+    public void printTasksOnDate(TaskList results, String date) {
+        line();
+        System.out.println("\ttasks on " + date + ":");
         if (results.size() == 0) {
-            System.out.println("\t" + "No tasks found on this date.");
+            System.out.println("\tnothing on this day");
         } else {
             for (int i = 0; i < results.size(); i++) {
                 System.out.println("\t" + (i + 1) + ". " + results.get(i));
             }
         }
-        printLine();
+        line();
     }
 
-    public void showLoadingError() {
-        System.out.println("Error loading tasks. Starting with empty list.");
+    public void printLoadError() {
+        System.out.println("couldn't load saved tasks, starting fresh");
     }
 
-    /**
-     * Shows tasks matching the search keyword.
-     * @param results The matching tasks.
-     */
-    public void showFound(TaskList results) {
-        printLine();
-        System.out.println("\t" + "Here are the matching tasks in your list:");
+    public void printSearchResults(TaskList results) {
+        line();
+        System.out.println("\tfound these:");
         if (results.size() == 0) {
-            System.out.println("\t" + "No matching tasks found.");
+            System.out.println("\tno matches");
         } else {
             for (int i = 0; i < results.size(); i++) {
                 System.out.println("\t" + (i + 1) + ". " + results.get(i));
             }
         }
-        printLine();
+        line();
     }
 
-    /**
-     * Closes the scanner.
-     */
-    public void close() {
-        scanner.close();
+    public void shutdown() {
+        sc.close();
     }
 }

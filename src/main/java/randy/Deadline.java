@@ -1,44 +1,38 @@
 package randy;
 
-// relevant imports
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 /**
- * Represents a task with a deadline.
+ * Task with a due date.
  */
 public class Deadline extends Task {
-    protected Object by;
+    private Object dueDate; // can be LocalDate or String
 
-    /**
-     * Creates a Deadline task.
-     * @param description Task description.
-     * @param by Deadline date (yyyy-MM-dd format or free text).
-     */
-    public Deadline(String description, String by) {
-        super(description);
+    public Deadline(String desc, String by) {
+        super(desc);
+        // try parsing as date, otherwise keep as string
         try {
-            this.by = LocalDate.parse(by);
+            this.dueDate = LocalDate.parse(by);
         } catch (DateTimeParseException e) {
-            this.by = by;
+            this.dueDate = by;
         }
     }
 
     @Override
     public String toString() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd yyyy");
-        if (by instanceof LocalDate) {
-            return "[D]" + super.toString() + " (by: " + ((LocalDate) by).format(formatter) + ")";
-        } else {
-            return "[D]" + super.toString() + " (by: " + by + ")";
-        }
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MMM dd yyyy");
+        String dateStr = (dueDate instanceof LocalDate) 
+            ? ((LocalDate) dueDate).format(fmt) 
+            : dueDate.toString();
+        return "[D]" + super.toString() + " (by: " + dateStr + ")";
     }
 
     @Override
-    public boolean occursOn(LocalDate date) {
-        if (by instanceof LocalDate) {
-            return ((LocalDate) by).equals(date);
+    public boolean isOnDate(LocalDate d) {
+        if (dueDate instanceof LocalDate) {
+            return ((LocalDate) dueDate).equals(d);
         }
         return false;
     }

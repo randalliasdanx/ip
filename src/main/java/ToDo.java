@@ -1,11 +1,7 @@
-package randy;
-
-/**
- * Basic task with no date attached.
- */
+// ToDo class which is a subclass of Task
 public class ToDo extends Task {
-    public ToDo(String desc) {
-        super(desc);
+    public ToDo(String description) {
+        super(description);
     }
 
     @Override

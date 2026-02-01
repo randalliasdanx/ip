@@ -3,54 +3,36 @@ package randy;
 import java.time.LocalDate;
 
 /**
- * Represents a task with a description and completion status.
+ * A task you gotta do.
  */
 public class Task {
-    protected String description;
-    protected boolean isDone;
+    protected String desc;
+    protected boolean done;
 
-    /**
-     * Creates a new task with the given description.
-     * @param description The task description.
-     */
-    public Task(String description) {
-        this.description = description;
-        this.isDone = false;
+    public Task(String desc) {
+        this.desc = desc;
+        this.done = false;
     }
 
-    /**
-     * Returns X if done, space if not done.
-     * @return Status icon string.
-     */
-    public String getStatusIcon() {
-        return (isDone ? "X" : " ");
+    public String getIcon() {
+        return done ? "X" : " ";
     }
 
     @Override 
     public String toString() {
-        return "[" + getStatusIcon() + "]" + " " + description;
+        return "[" + getIcon() + "] " + desc;
     }
 
-    /**
-     * Marks this task as done.
-     */
-    public void mark() {
-        this.isDone = true;
+    public void setDone() {
+        this.done = true;
     }
 
-    /**
-     * Marks this task as not done.
-     */
-    public void unmark() {
-        this.isDone = false;
+    public void setUndone() {
+        this.done = false;
     }
 
-    /**
-     * Checks if this task occurs on the given date.
-     * @param date The date to check.
-     * @return true if task occurs on this date, false otherwise.
-     */
-    public boolean occursOn(LocalDate date) {
+    // override in subclasses that have dates
+    public boolean isOnDate(LocalDate d) {
         return false;
     }
 }

@@ -9,99 +9,87 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 /**
- * Handles loading and saving tasks to a file.
+ * Handles reading/writing tasks to disk.
  */
 public class Storage {
-    private String path;
+    private String filepath;
 
-    /**
-     * Creates a Storage object with the specified file path.
-     * @param path The file path for storage.
-     */
-    public Storage(String path) {
-        this.path = path;
+    public Storage(String filepath) {
+        this.filepath = filepath;
     }
 
-    /**
-     * Creates the parent directory if it doesn't exist.
-     */
-    public void setupDirectory() {
-        File outputFile = new File(path);
-        File parentDir = outputFile.getParentFile();
-        if (parentDir != null && !parentDir.exists()) {
-            parentDir.mkdirs();
+    // create data folder if needed
+    public void init() {
+        File f = new File(filepath);
+        File dir = f.getParentFile();
+        if (dir != null && !dir.exists()) {
+            dir.mkdirs();
         }
     }
 
-    /**
-     * Loads tasks from the storage file.
-     * @return ArrayList of tasks loaded from file.
-     * @throws IOException If file cannot be read.
-     */
-    public ArrayList<Task> load() throws IOException {
-        ArrayList<Task> arr = new ArrayList<>();
-        File file = new File(path);
+    public ArrayList<Task> loadTasks() throws IOException {
+        ArrayList<Task> list = new ArrayList<>();
+        File f = new File(filepath);
         
-        if (!file.exists()) {
-            return arr;
+        if (!f.exists()) {
+            return list;
         }
 
-        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                line = line.trim();
-                if (line.isEmpty()) {
-                    continue;
-                }
+        BufferedReader reader = new BufferedReader(new FileReader(filepath));
+        String line;
+        while ((line = reader.readLine()) != null) {
+            line = line.trim();
+            if (line.isEmpty()) {
+                continue;
+            }
 
-                Task task = parseLine(line);
-                if (task != null) {
-                    arr.add(task);
-                }
+            Task task = decode(line);
+            if (task != null) {
+                list.add(task);
             }
         }
-        return arr;
+        reader.close();
+        return list;
     }
 
-    private Task parseLine(String line) {
+    // parse a line from storage file back into a Task
+    private Task decode(String line) {
         Task task = null;
         
         if (line.startsWith("[T]")) {
-            String description = line.substring(6).trim();
-            task = new ToDo(description);
+            String desc = line.substring(6).trim();
+            task = new ToDo(desc);
         } else if (line.startsWith("[D]")) {
-            String description = line.substring(6, line.indexOf(" (by:")).trim();
+            String desc = line.substring(6, line.indexOf(" (by:")).trim();
             String by = line.substring(line.indexOf("(by:") + 5, line.indexOf(")")).trim();
-            task = new Deadline(description, by);
+            task = new Deadline(desc, by);
         } else if (line.startsWith("[E]")) {
-            String description = line.substring(6, line.indexOf(" (from:")).trim();
+            String desc = line.substring(6, line.indexOf(" (from:")).trim();
             String from = line.substring(line.indexOf("(from:") + 6, line.indexOf(" to:")).trim();
             String to = line.substring(line.indexOf("to:") + 3, line.indexOf(")")).trim();
-            task = new Event(description, from, to);
+            task = new Event(desc, from, to);
         }
 
-        if (task != null) {
-            String status = line.substring(4, 5);
-            if (status.equals("X")) {
-                task.mark();
+        // check if marked done
+        if (task != null && line.length() > 4) {
+            if (line.charAt(4) == 'X') {
+                task.setDone();
             }
         }
         
         return task;
     }
 
-    /**
-     * Saves all tasks to the storage file.
-     * @param arr The TaskList to save.
-     */
-    public void save(TaskList arr) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(path, false))) {
-            for (int i = 0; i < arr.size(); i++) {
-                bw.write(arr.get(i).toString());
-                bw.newLine();
+    public void writeToFile(TaskList tasks) {
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, false));
+            for (int i = 0; i < tasks.size(); i++) {
+                writer.write(tasks.get(i).toString());
+                writer.newLine();
             }
+            writer.close();
         } catch (IOException e) {
-            System.out.println("Error writing to file: " + e.getMessage());
+            System.out.println("oops couldn't save: " + e.getMessage());
         }
     }
 }
