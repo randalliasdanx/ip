@@ -1,6 +1,8 @@
 package randy;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 import java.time.LocalDate;
 
 /**
@@ -45,26 +47,33 @@ public class TaskList {
         return t;
     }
 
-    // filter by date
+    // filter by date using streams
     public TaskList filterByDate(LocalDate date) {
-        TaskList filtered = new TaskList();
-        for (Task t : tasks) {
-            if (t.isOnDate(date)) {
-                filtered.add(t);
-            }
-        }
-        return filtered;
+        List<Task> filtered = tasks.stream()
+                .filter(t -> t.isOnDate(date))
+                .collect(Collectors.toList());
+        return new TaskList(new ArrayList<>(filtered));
     }
 
-    // search by keyword
+    // search by keyword using streams
     public TaskList search(String keyword) {
-        TaskList matches = new TaskList();
-        for (Task t : tasks) {
-            String lower = t.toString().toLowerCase();
-            if (lower.contains(keyword.toLowerCase())) {
-                matches.add(t);
-            }
-        }
-        return matches;
+        String lowerKeyword = keyword.toLowerCase();
+        List<Task> matches = tasks.stream()
+                .filter(t -> t.toString().toLowerCase().contains(lowerKeyword))
+                .collect(Collectors.toList());
+        return new TaskList(new ArrayList<>(matches));
+    }
+
+    // check if any task matches condition
+    public boolean hasTasksDue(LocalDate date) {
+        return tasks.stream().anyMatch(t -> t.isOnDate(date));
+    }
+
+    // count tasks matching keyword
+    public long countMatches(String keyword) {
+        String lowerKeyword = keyword.toLowerCase();
+        return tasks.stream()
+                .filter(t -> t.toString().toLowerCase().contains(lowerKeyword))
+                .count();
     }
 }
