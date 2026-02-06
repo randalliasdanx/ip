@@ -15,6 +15,7 @@ public class Storage {
     private String filepath;
 
     public Storage(String filepath) {
+        assert filepath != null && !filepath.isEmpty() : "filepath should not be null or empty";
         this.filepath = filepath;
     }
 
@@ -54,6 +55,7 @@ public class Storage {
 
     // parse a line from storage file back into a Task
     private Task decode(String line) {
+        assert line != null : "line to decode should not be null";
         Task task = null;
         
         if (line.startsWith("[T]")) {
@@ -81,6 +83,7 @@ public class Storage {
     }
 
     public void writeToFile(TaskList tasks) {
+        assert tasks != null : "tasks to save should not be null";
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filepath, false));
             for (int i = 0; i < tasks.size(); i++) {
