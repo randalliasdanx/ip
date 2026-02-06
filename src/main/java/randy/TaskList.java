@@ -131,4 +131,25 @@ public class TaskList {
     private boolean isValidIndex(int idx) {
         return idx >= 0 && idx < tasks.size();
     }
+
+    /**
+     * Returns undone deadlines due within the next N days.
+     */
+    public TaskList getUpcoming(int days) {
+        TaskList upcoming = new TaskList();
+        LocalDate today = LocalDate.now();
+        LocalDate cutoff = today.plusDays(days);
+
+        for (Task t : tasks) {
+            if (t instanceof Deadline && !t.isDone()) {
+                Deadline d = (Deadline) t;
+                LocalDate dueDate = d.getDate();
+                // include if date exists and is between today and cutoff (inclusive)
+                if (dueDate != null && !dueDate.isBefore(today) && !dueDate.isAfter(cutoff)) {
+                    upcoming.add(t);
+                }
+            }
+        }
+        return upcoming;
+    }
 }

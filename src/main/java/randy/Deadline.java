@@ -36,4 +36,14 @@ public class Deadline extends Task {
         }
         return false;
     }
+
+    /**
+     * Returns the due date if it's a LocalDate, null otherwise.
+     */
+    public LocalDate getDate() {
+        if (dueDate instanceof LocalDate) {
+            return (LocalDate) dueDate;
+        }
+        return null;
+    }
 }

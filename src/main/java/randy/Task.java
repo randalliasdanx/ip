@@ -31,6 +31,10 @@ public class Task {
         this.done = false;
     }
 
+    public boolean isDone() {
+        return done;
+    }
+
     // override in subclasses that have dates
     public boolean isOnDate(LocalDate d) {
         return false;

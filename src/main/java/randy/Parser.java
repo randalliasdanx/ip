@@ -13,6 +13,7 @@ public class Parser {
     private static final int EVENT_PREFIX_LEN = 6;     // "event "
     private static final int DEADLINE_PREFIX_LEN = 9;  // "deadline "
     private static final int FIND_PREFIX_LEN = 5;      // "find "
+    private static final int DEFAULT_REMIND_DAYS = 7;  // default reminder window
 
     // Error messages
     private static final String ERR_UNKNOWN = "huh? idk what that means";
@@ -33,7 +34,7 @@ public class Parser {
             return ERR_UNKNOWN;
         }
         
-        if (words.length == 1 && !cmd.equals("list") && !cmd.equals("bye")) {
+        if (words.length == 1 && !cmd.equals("list") && !cmd.equals("bye") && !cmd.equals("remind")) {
             return ERR_EMPTY;
         }
 
@@ -58,6 +59,8 @@ public class Parser {
             return handleOn(words, tasks);
         case "find":
             return handleFind(input, tasks);
+        case "remind":
+            return handleRemind(words, tasks);
         default:
             return ERR_UNKNOWN;
         }
@@ -177,6 +180,31 @@ public class Parser {
     private static String formatTaskAdded(Task t, int totalTasks) {
         return "added:\n" + t + "\nyou now have " + totalTasks + " tasks";
     }
+
+    private static String handleRemind(String[] words, TaskList tasks) {
+        int days = DEFAULT_REMIND_DAYS;
+        if (words.length > 1) {
+            try {
+                days = Integer.parseInt(words[1]);
+                if (days < 0) {
+                    return "days can't be negative yo";
+                }
+            } catch (NumberFormatException e) {
+                return "use: remind or remind <number of days>";
+            }
+        }
+        
+        TaskList upcoming = tasks.getUpcoming(days);
+        if (upcoming.size() == 0) {
+            return "no deadlines in the next " + days + " days, you're chilling";
+        }
+        
+        StringBuilder sb = new StringBuilder("heads up! deadlines in the next " + days + " days:");
+        for (int i = 0; i < upcoming.size(); i++) {
+            sb.append("\n").append(i + 1).append(". ").append(upcoming.get(i));
+        }
+        return sb.toString();
+    }
     
     /**
      * Executes command and updates UI (for CLI).
@@ -191,7 +219,7 @@ public class Parser {
             return true;
         }
         
-        if (words.length == 1 && !cmd.equals("list") && !cmd.equals("bye")) {
+        if (words.length == 1 && !cmd.equals("list") && !cmd.equals("bye") && !cmd.equals("remind")) {
             ui.printEmpty();
             return true;
         }
@@ -225,6 +253,9 @@ public class Parser {
             break;
         case "find":
             cliFind(input, tasks, ui);
+            break;
+        case "remind":
+            cliRemind(words, tasks, ui);
             break;
         default:
             ui.printUnknown();
@@ -323,5 +354,10 @@ public class Parser {
         }
         TaskList matches = tasks.search(keyword);
         ui.printSearchResults(matches);
+    }
+
+    private static void cliRemind(String[] words, TaskList tasks, Ui ui) {
+        String result = handleRemind(words, tasks);
+        ui.printError(result); // reusing printError for simple output
     }
 }
