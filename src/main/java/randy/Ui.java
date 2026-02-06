@@ -42,7 +42,18 @@ public class Ui {
             System.out.println("found your saved tasks:");
             System.out.println(DIVIDER);
             for (int i = 0; i < tasks.size(); i++) {
-                System.out.println(tasks.get(i));
+                System.out.println((i + 1) + ". " + tasks.get(i));
+            }
+            System.out.println(DIVIDER);
+        }
+    }
+
+    public void printReminders(TaskList upcoming) {
+        if (upcoming.size() > 0) {
+            System.out.println("⚠️  heads up! deadlines coming up:");
+            System.out.println(DIVIDER);
+            for (int i = 0; i < upcoming.size(); i++) {
+                System.out.println("• " + upcoming.get(i));
             }
             System.out.println(DIVIDER);
         }

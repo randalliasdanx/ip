@@ -29,14 +29,14 @@ public class MainWindow extends AnchorPane {
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(chatBox.heightProperty());
-        // welcome msg
-        chatBox.getChildren().add(
-            DialogBox.forRandy("yo! i'm Randy\nwhatcha need?", randyPic)
-        );
     }
 
     public void setRandy(Randy r) {
         randy = r;
+        // show startup message with saved tasks and reminders
+        chatBox.getChildren().add(
+            DialogBox.forRandy(randy.getStartupMessage(), randyPic)
+        );
     }
 
     @FXML
