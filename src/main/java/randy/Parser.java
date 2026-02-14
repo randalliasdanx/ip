@@ -25,10 +25,18 @@ public class Parser {
     
     /**
      * Processes user input and returns response string (for GUI).
+     *
+     * @param input User's raw input string
+     * @param tasks TaskList to operate on
+     * @return Response message to display
      */
     public static String processInput(String input, TaskList tasks) {
-        String[] words = input.split(" ");
-        String cmd = words[0];
+        if (input == null || input.trim().isEmpty()) {
+            return ERR_EMPTY;
+        }
+        
+        String[] words = input.trim().split(" ");
+        String cmd = words[0].toLowerCase();
 
         if (!Prefix.contains(cmd)) {
             return ERR_UNKNOWN;
