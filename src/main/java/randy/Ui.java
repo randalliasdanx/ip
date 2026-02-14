@@ -3,10 +3,15 @@ package randy;
 import java.util.Scanner;
 
 /**
- * Handles all the printing stuff.
+ * Handles all user interface interactions for CLI mode.
+ * Provides methods for displaying messages and reading input.
  */
 public class Ui {
     private static final String DIVIDER = "____________________________________________________________";
+    private static final String GREETING = "yo! i'm Randy";
+    private static final String FAREWELL = "peace out! see ya later";
+    private static final String PROMPT = "whatcha need?";
+    
     private Scanner sc;
 
     public Ui() {
@@ -23,17 +28,17 @@ public class Ui {
 
     public void greet() {
         System.out.println(DIVIDER);
-        System.out.println("yo! i'm Randy");
+        System.out.println(GREETING);
     }
 
     public void sayBye() {
         System.out.println(DIVIDER);
-        System.out.println("peace out! see ya later");
+        System.out.println(FAREWELL);
         System.out.println(DIVIDER);
     }
 
     public void askForInput() {
-        System.out.println("whatcha need?");
+        System.out.println(PROMPT);
         System.out.println(DIVIDER);
     }
 
