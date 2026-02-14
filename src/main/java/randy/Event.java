@@ -11,6 +11,13 @@ public class Event extends Task {
     private Object from;
     private Object to;
 
+    /**
+     * Creates an event task with a time range.
+     *
+     * @param desc Task description
+     * @param from Start date or time
+     * @param to End date or time
+     */
     public Event(String desc, String from, String to) {
         super(desc);
         // parse dates if possible
