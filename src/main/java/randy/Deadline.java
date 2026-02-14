@@ -22,12 +22,21 @@ public class Deadline extends Task {
         DateTimeFormatter.ofPattern("dd/MM/yyyy"),                  // 28/01/2026
     };
 
+    /**
+     * Creates a deadline task with a description and due date.
+     *
+     * @param desc Task description
+     * @param by Due date string in various formats
+     */
     public Deadline(String desc, String by) {
         super(desc);
         this.dueDate = parseDate(by);
     }
 
-    // try multiple date formats
+    /**
+     * Attempts to parse the date string using multiple formats.
+     * Falls back to storing as string if parsing fails.
+     */
     private Object parseDate(String by) {
         String cleaned = by.trim().replaceAll("(\\d)(st|nd|rd|th)", "$1"); // remove 10th -> 10
         for (DateTimeFormatter fmt : FORMATS) {
