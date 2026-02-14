@@ -20,17 +20,15 @@ public class TaskList {
      * Creates a task list from existing tasks.
      */
     public TaskList(ArrayList<Task> loadedTasks) {
-        this.tasks = (loadedTasks != null) ? loadedTasks : new ArrayList<>();
+        assert loadedTasks != null : "loaded tasks should not be null";
+        this.tasks = loadedTasks;
     }
 
-    /**
-     * Adds one or more tasks to the list.
-     */
+    // varargs - can pass 1 or more tasks: add(task1) or add(task1, task2, task3)
     public void add(Task... newTasks) {
         for (Task t : newTasks) {
-            if (t != null) {
-                tasks.add(t);
-            }
+            assert t != null : "task to add should not be null";
+            tasks.add(t);
         }
     }
 
@@ -38,9 +36,7 @@ public class TaskList {
      * Removes and returns the task at the given index.
      */
     public Task remove(int idx) {
-        if (!isValidIndex(idx)) {
-            return null;
-        }
+        assert idx >= 0 && idx < tasks.size() : "index out of bounds";
         return tasks.remove(idx);
     }
 
@@ -48,9 +44,7 @@ public class TaskList {
      * Returns the task at the given index.
      */
     public Task get(int idx) {
-        if (!isValidIndex(idx)) {
-            return null;
-        }
+        assert idx >= 0 && idx < tasks.size() : "index out of bounds";
         return tasks.get(idx);
     }
 
@@ -72,9 +66,7 @@ public class TaskList {
      * Marks task at index as done and returns it.
      */
     public Task setDone(int idx) {
-        if (!isValidIndex(idx)) {
-            return null;
-        }
+        assert idx >= 0 && idx < tasks.size() : "index out of bounds";
         Task t = tasks.get(idx);
         t.setDone();
         return t;
@@ -84,9 +76,7 @@ public class TaskList {
      * Marks task at index as not done and returns it.
      */
     public Task setUndone(int idx) {
-        if (!isValidIndex(idx)) {
-            return null;
-        }
+        assert idx >= 0 && idx < tasks.size() : "index out of bounds";
         Task t = tasks.get(idx);
         t.setUndone();
         return t;
@@ -96,6 +86,7 @@ public class TaskList {
      * Returns tasks occurring on the given date.
      */
     public TaskList filterByDate(LocalDate date) {
+        assert date != null : "date should not be null";
         TaskList filtered = new TaskList();
         if (date == null) {
             return filtered;
@@ -112,6 +103,7 @@ public class TaskList {
      * Returns tasks containing the keyword (case-insensitive).
      */
     public TaskList search(String keyword) {
+        assert keyword != null : "keyword should not be null";
         TaskList matches = new TaskList();
         if (keyword == null || keyword.trim().isEmpty()) {
             return matches;
