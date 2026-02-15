@@ -3,7 +3,8 @@ package randy;
 import java.util.Scanner;
 
 /**
- * Handles all the printing stuff.
+ * Handles all CLI user interface operations for Vikkstar task manager.
+ * All messages use Vikkstar's energetic YouTuber personality.
  */
 public class Ui {
     private static final String DIVIDER = "____________________________________________________________";
@@ -23,23 +24,24 @@ public class Ui {
 
     public void greet() {
         System.out.println(DIVIDER);
-        System.out.println("yo! i'm Randy");
+        System.out.println("YO WHAT'S GOOD! I'm Vikkstar, your task manager!");
+        System.out.println("let's get productive Deji!");
     }
 
     public void sayBye() {
         System.out.println(DIVIDER);
-        System.out.println("peace out! see ya later");
+        System.out.println("aight Deji, catch you later! stay winning!");
         System.out.println(DIVIDER);
     }
 
     public void askForInput() {
-        System.out.println("whatcha need?");
+        System.out.println("whatcha need fam?");
         System.out.println(DIVIDER);
     }
 
     public void printSavedTasks(TaskList tasks) {
         if (tasks.size() > 0) {
-            System.out.println("found your saved tasks:");
+            System.out.println("oi Deji, found your saved tasks:");
             System.out.println(DIVIDER);
             for (int i = 0; i < tasks.size(); i++) {
                 System.out.println(tasks.get(i));
@@ -56,19 +58,19 @@ public class Ui {
 
     public void printUnknown() {
         line();
-        System.out.println("\thuh? idk what that means bro");
+        System.out.println("\tbruv that's not a thing... try again Deji!");
         line();
     }
 
     public void printEmpty() {
         line();
-        System.out.println("\tuh you forgot to add details");
+        System.out.println("\tyo Deji you forgot the details fam!");
         line();
     }
 
     public void printList(TaskList tasks) {
         line();
-        System.out.println("\there's what you got:");
+        System.out.println("\there's the lineup Deji:");
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println("\t" + (i + 1) + ". " + tasks.get(i));
         }
@@ -77,29 +79,29 @@ public class Ui {
 
     public void printMarked(Task t) {
         line();
-        System.out.println("\tnice! marked as done:");
+        System.out.println("\tBIG W Deji! smashed it:");
         System.out.println("\t" + t);
         line();
     }
 
     public void printUnmarked(Task t) {
         line();
-        System.out.println("\tok unmarked this one:");
+        System.out.println("\talright Deji, unmarked this one:");
         System.out.println("\t" + t);
         line();
     }
 
     public void printAdded(Task t, int total) {
         line();
-        System.out.println("\tadded:");
+        System.out.println("\tLESGOOO! added that one Deji:");
         System.out.println("\t" + t);
-        System.out.println("\tyou now have " + total + " tasks");
+        System.out.println("\tyou now have " + total + " tasks in the bag!");
         line();
     }
 
     public void printDeleted(Task t, int total) {
         line();
-        System.out.println("\tdeleted:");
+        System.out.println("\tgone and dusted Deji:");
         System.out.println("\t" + t);
         System.out.println("\tyou now have " + total + " tasks");
         line();
@@ -107,9 +109,9 @@ public class Ui {
 
     public void printTasksOnDate(TaskList results, String date) {
         line();
-        System.out.println("\ttasks on " + date + ":");
+        System.out.println("\ttasks on " + date + " Deji:");
         if (results.size() == 0) {
-            System.out.println("\tnothing on this day");
+            System.out.println("\tnothing on this day fam!");
         } else {
             for (int i = 0; i < results.size(); i++) {
                 System.out.println("\t" + (i + 1) + ". " + results.get(i));
@@ -119,14 +121,14 @@ public class Ui {
     }
 
     public void printLoadError() {
-        System.out.println("couldn't load saved tasks, starting fresh");
+        System.out.println("couldn't load saved tasks Deji, starting fresh!");
     }
 
     public void printSearchResults(TaskList results) {
         line();
-        System.out.println("\tfound these:");
+        System.out.println("\tfound these for ya Deji:");
         if (results.size() == 0) {
-            System.out.println("\tno matches");
+            System.out.println("\tnah nothing matched fam");
         } else {
             for (int i = 0; i < results.size(); i++) {
                 System.out.println("\t" + (i + 1) + ". " + results.get(i));
