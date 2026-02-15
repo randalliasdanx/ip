@@ -9,7 +9,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 /**
- * Main GUI app.
+ * Main GUI application entry point.
+ * Loads the FXML layout, applies CSS styling, and displays the chat window.
  */
 public class Main extends Application {
 
@@ -21,10 +22,12 @@ public class Main extends Application {
             FXMLLoader loader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
             AnchorPane root = loader.load();
             Scene scene = new Scene(root);
+            scene.getStylesheets().add(Main.class.getResource("/view/styles.css").toExternalForm());
             stage.setScene(scene);
             stage.setTitle("Randy");
             stage.setMinHeight(220);
-            stage.setMinWidth(417);
+            stage.setMinWidth(300);
+            stage.setResizable(true);
             loader.<MainWindow>getController().setRandy(randy);
             stage.show();
         } catch (IOException e) {
