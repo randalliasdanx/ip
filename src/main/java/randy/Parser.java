@@ -30,6 +30,11 @@ public class Parser {
      * Processes user input and returns response string (for GUI).
      */
     public static String processInput(String input, TaskList tasks) {
+        input = normalize(input);
+        if (input.isEmpty()) {
+            return ERR_EMPTY;
+        }
+
         String[] words = input.split(" ");
         String cmd = words[0];
 
@@ -91,6 +96,9 @@ public class Parser {
     }
 
     private static String handleMark(String[] words, TaskList tasks) {
+        if (tasks.isEmpty()) {
+            return ERR_EMPTY_LIST;
+        }
         try {
             int taskNum = Integer.parseInt(words[1]);
             Task t = tasks.setDone(taskNum - 1);
@@ -103,6 +111,9 @@ public class Parser {
     }
 
     private static String handleUnmark(String[] words, TaskList tasks) {
+        if (tasks.isEmpty()) {
+            return ERR_EMPTY_LIST;
+        }
         try {
             int taskNum = Integer.parseInt(words[1]);
             Task t = tasks.setUndone(taskNum - 1);
@@ -115,39 +126,84 @@ public class Parser {
     }
 
     private static String handleTodo(String input, TaskList tasks) {
-        String desc = input.substring(TODO_PREFIX_LEN);
+        String desc = input.substring(TODO_PREFIX_LEN).trim();
+        if (desc.isEmpty()) {
+            return ERR_EMPTY_DESC;
+        }
         Task t = new ToDo(desc);
+        if (tasks.hasDuplicate(t)) {
+            return ERR_DUPLICATE;
+        }
         tasks.add(t);
         return formatTaskAdded(t, tasks.size());
     }
 
     private static String handleDeadline(String input, TaskList tasks) {
-        String rest = input.substring(DEADLINE_PREFIX_LEN);
+        if (input.length() <= DEADLINE_PREFIX_LEN) {
+            return ERR_DEADLINE_FORMAT;
+        }
+        String rest = input.substring(DEADLINE_PREFIX_LEN).trim();
         String[] parts = rest.split(" /by ");
         
         if (parts.length != 2) {
             return ERR_DEADLINE_FORMAT;
         }
+
+        String desc = parts[0].trim();
+        String by = parts[1].trim();
+        if (desc.isEmpty() || by.isEmpty()) {
+            return ERR_DEADLINE_FORMAT;
+        }
         
-        Task t = new Deadline(parts[0], parts[1]);
+        Task t = new Deadline(desc, by);
+        if (tasks.hasDuplicate(t)) {
+            return ERR_DUPLICATE;
+        }
         tasks.add(t);
         return formatTaskAdded(t, tasks.size());
     }
 
     private static String handleEvent(String input, TaskList tasks) {
-        String rest = input.substring(EVENT_PREFIX_LEN);
+        if (input.length() <= EVENT_PREFIX_LEN) {
+            return ERR_EVENT_FORMAT;
+        }
+        String rest = input.substring(EVENT_PREFIX_LEN).trim();
         String[] parts = rest.split(" /from | /to ");
         
         if (parts.length != 3) {
             return ERR_EVENT_FORMAT;
         }
+
+        String desc = parts[0].trim();
+        String from = parts[1].trim();
+        String to = parts[2].trim();
+        if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            return ERR_EVENT_FORMAT;
+        }
+
+        // Validate date order if both are valid dates
+        try {
+            LocalDate startDate = LocalDate.parse(from);
+            LocalDate endDate = LocalDate.parse(to);
+            if (startDate.isAfter(endDate)) {
+                return ERR_EVENT_DATE_ORDER;
+            }
+        } catch (DateTimeParseException e) {
+            // One or both are not dates, skip date order check
+        }
         
-        Task t = new Event(parts[0], parts[1], parts[2]);
+        Task t = new Event(desc, from, to);
+        if (tasks.hasDuplicate(t)) {
+            return ERR_DUPLICATE;
+        }
         tasks.add(t);
         return formatTaskAdded(t, tasks.size());
     }
 
     private static String handleDelete(String[] words, TaskList tasks) {
+        if (tasks.isEmpty()) {
+            return ERR_EMPTY_LIST;
+        }
         try {
             int idx = Integer.parseInt(words[1]);
             Task t = tasks.remove(idx - 1);
@@ -160,6 +216,9 @@ public class Parser {
     }
 
     private static String handleOn(String[] words, TaskList tasks) {
+        if (words.length < 2) {
+            return ERR_DATE_FORMAT;
+        }
         try {
             LocalDate date = LocalDate.parse(words[1]);
             TaskList filtered = tasks.filterByDate(date);
@@ -170,6 +229,9 @@ public class Parser {
     }
 
     private static String handleFind(String input, TaskList tasks) {
+        if (input.length() <= FIND_PREFIX_LEN) {
+            return "find what?";
+        }
         String keyword = input.substring(FIND_PREFIX_LEN).trim();
         if (keyword.isEmpty()) {
             return "find what Deji? give me a keyword!";
@@ -206,6 +268,12 @@ public class Parser {
      * Returns false if user wants to exit, true otherwise.
      */
     public static boolean execute(String input, TaskList tasks, Ui ui) {
+        input = normalize(input);
+        if (input.isEmpty()) {
+            ui.printEmpty();
+            return true;
+        }
+
         String[] words = input.split(" ");
         String cmd = words[0];
 
@@ -258,6 +326,10 @@ public class Parser {
     }
 
     private static void cliMark(String[] words, TaskList tasks, Ui ui) {
+        if (tasks.isEmpty()) {
+            ui.printError(ERR_EMPTY_LIST);
+            return;
+        }
         try {
             int num = Integer.parseInt(words[1]);
             Task t = tasks.setDone(num - 1);
@@ -270,6 +342,10 @@ public class Parser {
     }
 
     private static void cliUnmark(String[] words, TaskList tasks, Ui ui) {
+        if (tasks.isEmpty()) {
+            ui.printError(ERR_EMPTY_LIST);
+            return;
+        }
         try {
             int num = Integer.parseInt(words[1]);
             Task t = tasks.setUndone(num - 1);
@@ -282,41 +358,95 @@ public class Parser {
     }
 
     private static void cliTodo(String input, TaskList tasks, Ui ui) {
-        String desc = input.substring(TODO_PREFIX_LEN);
+        String desc = input.substring(TODO_PREFIX_LEN).trim();
+        if (desc.isEmpty()) {
+            ui.printError(ERR_EMPTY_DESC);
+            return;
+        }
         Task t = new ToDo(desc);
+        if (tasks.hasDuplicate(t)) {
+            ui.printError(ERR_DUPLICATE);
+            return;
+        }
         tasks.add(t);
         ui.printAdded(t, tasks.size());
     }
 
     private static void cliDeadline(String input, TaskList tasks, Ui ui) {
-        String rest = input.substring(DEADLINE_PREFIX_LEN);
+        if (input.length() <= DEADLINE_PREFIX_LEN) {
+            ui.printError(ERR_DEADLINE_FORMAT);
+            return;
+        }
+        String rest = input.substring(DEADLINE_PREFIX_LEN).trim();
         String[] parts = rest.split(" /by ");
         
         if (parts.length != 2) {
             ui.printError(ERR_DEADLINE_FORMAT);
             return;
         }
+
+        String desc = parts[0].trim();
+        String by = parts[1].trim();
+        if (desc.isEmpty() || by.isEmpty()) {
+            ui.printError(ERR_DEADLINE_FORMAT);
+            return;
+        }
         
-        Task t = new Deadline(parts[0], parts[1]);
+        Task t = new Deadline(desc, by);
+        if (tasks.hasDuplicate(t)) {
+            ui.printError(ERR_DUPLICATE);
+            return;
+        }
         tasks.add(t);
         ui.printAdded(t, tasks.size());
     }
 
     private static void cliEvent(String input, TaskList tasks, Ui ui) {
-        String rest = input.substring(EVENT_PREFIX_LEN);
+        if (input.length() <= EVENT_PREFIX_LEN) {
+            ui.printError(ERR_EVENT_FORMAT);
+            return;
+        }
+        String rest = input.substring(EVENT_PREFIX_LEN).trim();
         String[] parts = rest.split(" /from | /to ");
         
         if (parts.length != 3) {
             ui.printError(ERR_EVENT_FORMAT);
             return;
         }
+
+        String desc = parts[0].trim();
+        String from = parts[1].trim();
+        String to = parts[2].trim();
+        if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            ui.printError(ERR_EVENT_FORMAT);
+            return;
+        }
+
+        try {
+            LocalDate startDate = LocalDate.parse(from);
+            LocalDate endDate = LocalDate.parse(to);
+            if (startDate.isAfter(endDate)) {
+                ui.printError(ERR_EVENT_DATE_ORDER);
+                return;
+            }
+        } catch (DateTimeParseException e) {
+            // One or both are not dates, skip date order check
+        }
         
-        Task t = new Event(parts[0], parts[1], parts[2]);
+        Task t = new Event(desc, from, to);
+        if (tasks.hasDuplicate(t)) {
+            ui.printError(ERR_DUPLICATE);
+            return;
+        }
         tasks.add(t);
         ui.printAdded(t, tasks.size());
     }
 
     private static void cliDelete(String[] words, TaskList tasks, Ui ui) {
+        if (tasks.isEmpty()) {
+            ui.printError(ERR_EMPTY_LIST);
+            return;
+        }
         try {
             int idx = Integer.parseInt(words[1]);
             Task t = tasks.remove(idx - 1);
@@ -324,11 +454,15 @@ public class Parser {
         } catch (NumberFormatException e) {
             ui.printError(ERR_INVALID_NUMBER);
         } catch (IndexOutOfBoundsException e) {
-            ui.printError("that task number doesn't exist Deji!");
+            ui.printError("task number out of range (1-" + tasks.size() + ")");
         }
     }
 
     private static void cliOn(String[] words, TaskList tasks, Ui ui) {
+        if (words.length < 2) {
+            ui.printError(ERR_DATE_FORMAT);
+            return;
+        }
         try {
             LocalDate date = LocalDate.parse(words[1]);
             TaskList filtered = tasks.filterByDate(date);
@@ -339,6 +473,10 @@ public class Parser {
     }
 
     private static void cliFind(String input, TaskList tasks, Ui ui) {
+        if (input.length() <= FIND_PREFIX_LEN) {
+            ui.printError("find what?");
+            return;
+        }
         String keyword = input.substring(FIND_PREFIX_LEN).trim();
         if (keyword.isEmpty()) {
             ui.printError("find what Deji? give me a keyword!");
