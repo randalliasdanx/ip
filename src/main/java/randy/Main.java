@@ -22,7 +22,7 @@ public class Main extends Application {
             AnchorPane root = loader.load();
             Scene scene = new Scene(root);
             stage.setScene(scene);
-            stage.setTitle("Randy");
+            stage.setTitle("Vikkstar Task Manager");
             stage.setMinHeight(220);
             stage.setMinWidth(417);
             loader.<MainWindow>getController().setRandy(randy);
