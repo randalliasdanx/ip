@@ -177,6 +177,24 @@ public class Parser {
     private static String formatTaskAdded(Task t, int totalTasks) {
         return "added:\n" + t + "\nyou now have " + totalTasks + " tasks";
     }
+
+    /**
+     * Checks if a response from processInput is an error message.
+     * Used by the GUI to apply error styling to error responses.
+     *
+     * @param response the response string from processInput
+     * @return true if the response is an error message
+     */
+    public static boolean isErrorResponse(String response) {
+        return response.equals(ERR_UNKNOWN)
+                || response.equals(ERR_EMPTY)
+                || response.equals(ERR_DEADLINE_FORMAT)
+                || response.equals(ERR_EVENT_FORMAT)
+                || response.equals(ERR_DATE_FORMAT)
+                || response.equals(ERR_INVALID_NUMBER)
+                || response.equals("task number out of range")
+                || response.equals("find what?");
+    }
     
     /**
      * Executes command and updates UI (for CLI).

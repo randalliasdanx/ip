@@ -9,7 +9,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
 /**
- * Controller for main chat window.
+ * Controller for the main chat window.
+ * Manages the chat display, user input, and interaction with the Randy bot.
  */
 public class MainWindow extends AnchorPane {
     @FXML
@@ -42,11 +43,19 @@ public class MainWindow extends AnchorPane {
     @FXML
     private void handleSend() {
         String input = inputField.getText();
+        if (input.trim().isEmpty()) {
+            return;
+        }
         String response = randy.getResponse(input);
-        chatBox.getChildren().addAll(
-            DialogBox.forUser(input, userPic),
-            DialogBox.forRandy(response, randyPic)
-        );
+
+        chatBox.getChildren().add(DialogBox.forUser(input, userPic));
+
+        if (Parser.isErrorResponse(response)) {
+            chatBox.getChildren().add(DialogBox.forError(response, randyPic));
+        } else {
+            chatBox.getChildren().add(DialogBox.forRandy(response, randyPic));
+        }
+
         inputField.clear();
     }
 }
