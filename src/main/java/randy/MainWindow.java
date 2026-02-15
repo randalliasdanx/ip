@@ -45,7 +45,19 @@ public class MainWindow extends AnchorPane {
     @FXML
     private void handleSend() {
         String input = inputField.getText();
+        if (input.trim().isEmpty()) {
+            return;
+        }
         String response = randy.getResponse(input);
+
+        chatBox.getChildren().add(DialogBox.forUser(input, userPic));
+
+        if (Parser.isErrorResponse(response)) {
+            chatBox.getChildren().add(DialogBox.forError(response, randyPic));
+        } else {
+            chatBox.getChildren().add(DialogBox.forRandy(response, randyPic));
+        }
+
         chatBox.getChildren().addAll(
             DialogBox.forUser(input, dejiPic),
             DialogBox.forRandy(response, vikkstarPic)
