@@ -5,7 +5,8 @@ import java.time.format.DateTimeParseException;
 
 /**
  * Parses user input and executes the appropriate command.
- * Includes comprehensive input validation and error handling.
+ * Vikkstar's command processor -- all responses are delivered
+ * with high-energy YouTuber personality.
  */
 public class Parser {
     
@@ -15,29 +16,16 @@ public class Parser {
     private static final int DEADLINE_PREFIX_LEN = 9;  // "deadline "
     private static final int FIND_PREFIX_LEN = 5;      // "find "
 
-    // Error messages
-    private static final String ERR_UNKNOWN = "huh? idk what that means";
-    private static final String ERR_EMPTY = "uh you forgot to add details";
-    private static final String ERR_DEADLINE_FORMAT = "format: deadline <task> /by <date>";
-    private static final String ERR_EVENT_FORMAT = "format: event <task> /from <start> /to <end>";
-    private static final String ERR_DATE_FORMAT = "use format: on yyyy-MM-dd";
-    private static final String ERR_INVALID_NUMBER = "please enter a valid task number";
-    private static final String ERR_EMPTY_DESC = "description cannot be empty or just spaces";
-    private static final String ERR_DUPLICATE = "this task already exists in your list!";
-    private static final String ERR_EMPTY_LIST = "your task list is empty, nothing to do here";
-    private static final String ERR_EVENT_DATE_ORDER =
-            "start date cannot be after end date";
-
-    /**
-     * Normalizes user input by trimming and collapsing multiple spaces.
-     *
-     * @param input the raw user input
-     * @return the normalized input string
-     */
-    private static String normalize(String input) {
-        return input.trim().replaceAll("\\s+", " ");
-    }
-
+    // Vikkstar-style error messages
+    private static final String ERR_UNKNOWN = "bruv that's not a thing... try again Deji!";
+    private static final String ERR_EMPTY = "yo Deji you forgot the details fam!";
+    private static final String ERR_DEADLINE_FORMAT =
+            "nah fam, use this format: deadline <task> /by <date>";
+    private static final String ERR_EVENT_FORMAT =
+            "wrong format Deji! use: event <task> /from <start> /to <end>";
+    private static final String ERR_DATE_FORMAT = "Deji use the date format: on yyyy-MM-dd";
+    private static final String ERR_INVALID_NUMBER = "that's not a valid number bruv!";
+    
     /**
      * Processes user input and returns response string (for GUI).
      */
@@ -60,7 +48,7 @@ public class Parser {
 
         switch (cmd) {
         case "bye":
-            return "peace out! see ya later";
+            return "aight Deji, catch you later! stay winning!";
         case "list":
             return formatTaskList(tasks);
         case "mark":
@@ -86,9 +74,9 @@ public class Parser {
 
     private static String formatTaskList(TaskList tasks) {
         if (tasks.size() == 0) {
-            return "no tasks yet!";
+            return "no tasks yet Deji! you're either free or slacking...";
         }
-        StringBuilder sb = new StringBuilder("here's what you got:");
+        StringBuilder sb = new StringBuilder("here's the lineup Deji:");
         for (int i = 0; i < tasks.size(); i++) {
             sb.append("\n").append(i + 1).append(". ").append(tasks.get(i));
         }
@@ -98,7 +86,7 @@ public class Parser {
     private static String formatSearchResults(TaskList results, String header) {
         StringBuilder sb = new StringBuilder(header);
         if (results.size() == 0) {
-            sb.append("\nno matches");
+            sb.append("\nnah nothing matched fam");
         } else {
             for (int i = 0; i < results.size(); i++) {
                 sb.append("\n").append(i + 1).append(". ").append(results.get(i));
@@ -114,11 +102,11 @@ public class Parser {
         try {
             int taskNum = Integer.parseInt(words[1]);
             Task t = tasks.setDone(taskNum - 1);
-            return "nice! marked as done:\n" + t;
+            return "BIG W Deji! smashed it:\n" + t;
         } catch (NumberFormatException e) {
             return ERR_INVALID_NUMBER;
         } catch (IndexOutOfBoundsException e) {
-            return "task number out of range (1-" + tasks.size() + ")";
+            return "that task number doesn't exist Deji!";
         }
     }
 
@@ -129,11 +117,11 @@ public class Parser {
         try {
             int taskNum = Integer.parseInt(words[1]);
             Task t = tasks.setUndone(taskNum - 1);
-            return "ok unmarked this one:\n" + t;
+            return "alright Deji, unmarked this one:\n" + t;
         } catch (NumberFormatException e) {
             return ERR_INVALID_NUMBER;
         } catch (IndexOutOfBoundsException e) {
-            return "task number out of range (1-" + tasks.size() + ")";
+            return "that task number doesn't exist Deji!";
         }
     }
 
@@ -219,11 +207,11 @@ public class Parser {
         try {
             int idx = Integer.parseInt(words[1]);
             Task t = tasks.remove(idx - 1);
-            return "deleted:\n" + t + "\nyou now have " + tasks.size() + " tasks";
+            return "gone and dusted Deji:\n" + t + "\nyou now have " + tasks.size() + " tasks";
         } catch (NumberFormatException e) {
             return ERR_INVALID_NUMBER;
         } catch (IndexOutOfBoundsException e) {
-            return "task number out of range (1-" + tasks.size() + ")";
+            return "that task number doesn't exist Deji!";
         }
     }
 
@@ -234,7 +222,7 @@ public class Parser {
         try {
             LocalDate date = LocalDate.parse(words[1]);
             TaskList filtered = tasks.filterByDate(date);
-            return formatSearchResults(filtered, "tasks on " + date + ":");
+            return formatSearchResults(filtered, "tasks on " + date + " Deji:");
         } catch (DateTimeParseException e) {
             return ERR_DATE_FORMAT;
         }
@@ -246,14 +234,33 @@ public class Parser {
         }
         String keyword = input.substring(FIND_PREFIX_LEN).trim();
         if (keyword.isEmpty()) {
-            return "find what?";
+            return "find what Deji? give me a keyword!";
         }
         TaskList matches = tasks.search(keyword);
-        return formatSearchResults(matches, "found these:");
+        return formatSearchResults(matches, "found these for ya Deji:");
     }
 
     private static String formatTaskAdded(Task t, int totalTasks) {
-        return "added:\n" + t + "\nyou now have " + totalTasks + " tasks";
+        return "LESGOOO! added that one Deji:\n" + t
+                + "\nyou now have " + totalTasks + " tasks in the bag!";
+    }
+
+    /**
+     * Checks if a response from processInput is an error message.
+     * Used by the GUI to apply error styling to error responses.
+     *
+     * @param response the response string from processInput
+     * @return true if the response is an error message
+     */
+    public static boolean isErrorResponse(String response) {
+        return response.equals(ERR_UNKNOWN)
+                || response.equals(ERR_EMPTY)
+                || response.equals(ERR_DEADLINE_FORMAT)
+                || response.equals(ERR_EVENT_FORMAT)
+                || response.equals(ERR_DATE_FORMAT)
+                || response.equals(ERR_INVALID_NUMBER)
+                || response.equals("task number out of range")
+                || response.equals("find what?");
     }
     
     /**
@@ -330,7 +337,7 @@ public class Parser {
         } catch (NumberFormatException e) {
             ui.printError(ERR_INVALID_NUMBER);
         } catch (IndexOutOfBoundsException e) {
-            ui.printError("task number out of range (1-" + tasks.size() + ")");
+            ui.printError("that task number doesn't exist Deji!");
         }
     }
 
@@ -346,7 +353,7 @@ public class Parser {
         } catch (NumberFormatException e) {
             ui.printError(ERR_INVALID_NUMBER);
         } catch (IndexOutOfBoundsException e) {
-            ui.printError("task number out of range (1-" + tasks.size() + ")");
+            ui.printError("that task number doesn't exist Deji!");
         }
     }
 
@@ -472,7 +479,7 @@ public class Parser {
         }
         String keyword = input.substring(FIND_PREFIX_LEN).trim();
         if (keyword.isEmpty()) {
-            ui.printError("find what?");
+            ui.printError("find what Deji? give me a keyword!");
             return;
         }
         TaskList matches = tasks.search(keyword);

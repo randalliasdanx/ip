@@ -1,0 +1,103 @@
+/* Main chat window styles */
+.root {
+    -fx-background-color: #1a1a2e;
+}
+
+/* Scroll pane */
+.scroll-pane {
+    -fx-background: #1a1a2e;
+    -fx-background-color: #1a1a2e;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: #1a1a2e;
+}
+
+/* Chat container */
+#chatBox {
+    -fx-background-color: #1a1a2e;
+    -fx-padding: 10 5 10 5;
+    -fx-spacing: 8;
+}
+
+/* User message bubble - right aligned, green tint */
+.user-bubble {
+    -fx-background-color: #0f3460;
+    -fx-background-radius: 14 14 2 14;
+    -fx-padding: 10 14 10 14;
+    -fx-text-fill: #e0e0e0;
+    -fx-font-family: "SansSerif";
+    -fx-font-size: 13px;
+    -fx-wrap-text: true;
+}
+
+/* Bot message bubble - left aligned, grey */
+.bot-bubble {
+    -fx-background-color: #16213e;
+    -fx-background-radius: 14 14 14 2;
+    -fx-padding: 10 14 10 14;
+    -fx-text-fill: #e0e0e0;
+    -fx-font-family: "SansSerif";
+    -fx-font-size: 13px;
+    -fx-wrap-text: true;
+}
+
+/* Error message bubble - red tint for attention */
+.error-bubble {
+    -fx-background-color: #3d0000;
+    -fx-background-radius: 14 14 14 2;
+    -fx-padding: 10 14 10 14;
+    -fx-text-fill: #ff6b6b;
+    -fx-font-family: "SansSerif";
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-wrap-text: true;
+    -fx-border-color: #ff4444;
+    -fx-border-radius: 14 14 14 2;
+    -fx-border-width: 1;
+}
+
+/* Input field */
+#inputField {
+    -fx-background-color: #16213e;
+    -fx-text-fill: #e0e0e0;
+    -fx-prompt-text-fill: #666;
+    -fx-background-radius: 8;
+    -fx-padding: 8 12 8 12;
+    -fx-font-size: 13px;
+    -fx-border-color: #0f3460;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+}
+
+#inputField:focused {
+    -fx-border-color: #e94560;
+    -fx-border-width: 1.5;
+}
+
+/* Send button */
+#sendBtn {
+    -fx-background-color: #e94560;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+#sendBtn:hover {
+    -fx-background-color: #c73e54;
+}
+
+#sendBtn:pressed {
+    -fx-background-color: #a5354a;
+}
+
+/* Dialog box containers */
+.user-dialog {
+    -fx-padding: 4 8 4 40;
+}
+
+.bot-dialog {
+    -fx-padding: 4 40 4 8;
+}
