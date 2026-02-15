@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 /**
  * Handles reading and writing tasks to a text file for persistence.
- * Tasks are stored one per line in their toString() format.
+ * Uses try-with-resources for safe I/O and handles corrupted data gracefully.
  */
 public class Storage {
     private String filepath;
@@ -25,19 +25,25 @@ public class Storage {
         this.filepath = filepath;
     }
 
-    /** Creates the parent directory for the storage file if it doesn't exist. */
+    /**
+     * Creates the parent directory for the storage file if it doesn't exist.
+     * Handles the case where directory creation fails (e.g., permissions).
+     */
     public void init() {
         File f = new File(filepath);
         File dir = f.getParentFile();
         if (dir != null && !dir.exists()) {
-            dir.mkdirs();
+            boolean created = dir.mkdirs();
+            if (!created) {
+                System.out.println("warning: could not create data directory: " + dir.getPath());
+            }
         }
     }
 
     /**
      * Loads tasks from the storage file.
-     * Returns an empty list if the file doesn't exist.
-     * Corrupted lines are skipped instead of crashing.
+     * Returns an empty list if the file doesn't exist or can't be read.
+     * Corrupted or malformed lines are skipped instead of crashing.
      *
      * @return An ArrayList of the loaded tasks.
      * @throws IOException If the file cannot be read.
@@ -50,31 +56,52 @@ public class Storage {
             return list;
         }
 
+        if (!f.canRead()) {
+            System.out.println("warning: cannot read file: " + filepath);
+            return list;
+        }
+
         try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
             String line;
+            int lineNumber = 0;
             while ((line = reader.readLine()) != null) {
+                lineNumber++;
                 line = line.trim();
                 if (line.isEmpty()) {
                     continue;
                 }
-                // wrap in try-catch so one bad line doesnt kill the whole load
-                try {
-                    Task task = decode(line);
-                    if (task != null) {
-                        list.add(task);
-                    }
-                } catch (Exception e) {
-                    // corrupted line, just skip it
-                    System.out.println("skipping bad line: " + line);
+
+                Task task = decode(line, lineNumber);
+                if (task != null) {
+                    list.add(task);
                 }
             }
         }
         return list;
     }
 
-    // figure out what type of task a line represents and recreate it
-    private Task decode(String line) {
+    /**
+     * Parses a single line from storage back into a Task.
+     * Wraps parsing in try-catch so a corrupted line does not crash loading.
+     *
+     * @param line       The encoded task line.
+     * @param lineNumber The line number for error reporting.
+     * @return The decoded Task, or null if the line is corrupted.
+     */
+    private Task decode(String line, int lineNumber) {
         assert line != null : "line to decode should not be null";
+        try {
+            return decodeTask(line);
+        } catch (StringIndexOutOfBoundsException | IllegalArgumentException e) {
+            System.out.println("warning: skipping corrupted line " + lineNumber + ": " + line);
+            return null;
+        }
+    }
+
+    /**
+     * Internal decode that may throw on corrupted data.
+     */
+    private Task decodeTask(String line) {
         Task task = null;
 
         if (line.startsWith("[T]")) {
@@ -84,31 +111,44 @@ public class Storage {
             }
         } else if (line.startsWith("[D]")) {
             int byIdx = line.indexOf(" (by:");
-            if (byIdx != -1) {
-                String desc = line.substring(6, byIdx).trim();
-                int closeIdx = line.indexOf(")", byIdx);
-                if (closeIdx != -1) {
-                    String by = line.substring(line.indexOf("(by:") + 5, closeIdx).trim();
-                    task = new Deadline(desc, by);
-                }
+            if (byIdx == -1) {
+                return null;
+            }
+            String desc = line.substring(6, byIdx).trim();
+            int closeIdx = line.indexOf(")", byIdx);
+            if (closeIdx == -1) {
+                return null;
+            }
+            String by = line.substring(line.indexOf("(by:") + 5, closeIdx).trim();
+            if (!desc.isEmpty() && !by.isEmpty()) {
+                task = new Deadline(desc, by);
             }
         } else if (line.startsWith("[E]")) {
             int fromIdx = line.indexOf(" (from:");
-            if (fromIdx != -1) {
-                String desc = line.substring(6, fromIdx).trim();
-                int toIdx = line.indexOf(" to:", fromIdx);
-                int closeIdx = (toIdx != -1) ? line.indexOf(")", toIdx) : -1;
-                if (toIdx != -1 && closeIdx != -1) {
-                    String from = line.substring(line.indexOf("(from:") + 6, toIdx).trim();
-                    String to = line.substring(toIdx + 4, closeIdx).trim();
-                    task = new Event(desc, from, to);
-                }
+            if (fromIdx == -1) {
+                return null;
+            }
+            String desc = line.substring(6, fromIdx).trim();
+            int toIdx = line.indexOf(" to:", fromIdx);
+            if (toIdx == -1) {
+                return null;
+            }
+            int closeIdx = line.indexOf(")", toIdx);
+            if (closeIdx == -1) {
+                return null;
+            }
+            String from = line.substring(line.indexOf("(from:") + 6, toIdx).trim();
+            String to = line.substring(toIdx + 4, closeIdx).trim();
+            if (!desc.isEmpty() && !from.isEmpty() && !to.isEmpty()) {
+                task = new Event(desc, from, to);
             }
         }
 
-        // check the done status - 4th char is X if marked done
-        if (task != null && line.length() > 4 && line.charAt(4) == 'X') {
-            task.setDone();
+        // check if marked done
+        if (task != null && line.length() > 4) {
+            if (line.charAt(4) == 'X') {
+                task.setDone();
+            }
         }
 
         return task;
@@ -116,6 +156,7 @@ public class Storage {
 
     /**
      * Saves all tasks to the storage file, overwriting any existing content.
+     * If the file cannot be written, prints an error message.
      *
      * @param tasks The TaskList to save.
      */
@@ -127,7 +168,9 @@ public class Storage {
                 writer.newLine();
             }
         } catch (IOException e) {
-            System.out.println("oops couldnt save: " + e.getMessage());
+            System.out.println("oops couldn't save: " + e.getMessage());
+        } catch (SecurityException e) {
+            System.out.println("permission denied writing to: " + filepath);
         }
     }
 }

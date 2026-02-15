@@ -6,37 +6,58 @@ import java.time.format.DateTimeParseException;
 /**
  * Parses user input and executes the corresponding command.
  * Supports both GUI mode (returns response strings) and CLI mode (prints to Ui).
+ * All responses use Vikkstar's energetic YouTuber personality.
  */
 public class Parser {
 
-    // these are just the lengths of the command words + the space after
-    private static final int TODO_LEN = 5;      // "todo "
-    private static final int EVENT_LEN = 6;     // "event "
-    private static final int DEADLINE_LEN = 9;  // "deadline "
-    private static final int FIND_LEN = 5;      // "find "
+    // command prefix lengths for substring extraction
+    private static final int TODO_PREFIX_LEN = 5;      // "todo "
+    private static final int EVENT_PREFIX_LEN = 6;     // "event "
+    private static final int DEADLINE_PREFIX_LEN = 9;  // "deadline "
+    private static final int FIND_PREFIX_LEN = 5;      // "find "
 
-    // error messages - keeping them here so i dont repeat myself
-    private static final String ERR_UNKNOWN = "huh? idk what that means";
-    private static final String ERR_EMPTY = "uh you forgot to add details";
-    private static final String ERR_DEADLINE_FMT = "wrong format lah, use: deadline <task> /by <date>";
-    private static final String ERR_EVENT_FMT = "wrong format lah, use: event <task> /from <start> /to <end>";
-    private static final String ERR_DATE_FMT = "use this format: on yyyy-MM-dd";
-    private static final String ERR_BAD_NUM = "thats not a valid task number";
+    // Vikkstar-style error messages
+    private static final String ERR_UNKNOWN = "bruv that's not a thing... try again Deji!";
+    private static final String ERR_EMPTY = "yo Deji you forgot the details fam!";
+    private static final String ERR_EMPTY_DESC = "yo Deji you need to type a description!";
+    private static final String ERR_EMPTY_LIST = "no tasks to work with Deji!";
+    private static final String ERR_DUPLICATE = "yo Deji that task already exists!";
+    private static final String ERR_DEADLINE_FORMAT =
+            "nah fam, use this format: deadline <task> /by <date>";
+    private static final String ERR_EVENT_FORMAT =
+            "wrong format Deji! use: event <task> /from <start> /to <end>";
+    private static final String ERR_EVENT_DATE_ORDER =
+            "the start date can't be after the end date Deji!";
+    private static final String ERR_DATE_FORMAT = "Deji use the date format: on yyyy-MM-dd";
+    private static final String ERR_INVALID_NUMBER = "that's not a valid number bruv!";
+
+    /**
+     * Normalises user input by trimming whitespace, collapsing multiple
+     * spaces into one, and lowercasing for consistent command matching.
+     *
+     * @param input The raw user input.
+     * @return The normalised input string, or empty string if null.
+     */
+    private static String normalize(String input) {
+        if (input == null) {
+            return "";
+        }
+        return input.trim().replaceAll("\\s+", " ");
+    }
 
     /**
      * Processes user input and returns the appropriate response string.
-     * Used by the GUI to display Randy's reply.
+     * Used by the GUI to display the bot's reply.
      *
      * @param input The raw user input.
      * @param tasks The current task list to operate on.
      * @return A response string to show to the user.
      */
     public static String processInput(String input, TaskList tasks) {
-        // handle null or blank input so we dont crash
-        if (input == null || input.trim().isEmpty()) {
+        input = normalize(input);
+        if (input.isEmpty()) {
             return ERR_EMPTY;
         }
-        input = input.trim();
 
         String[] words = input.split(" ");
         String cmd = words[0].toLowerCase();
@@ -52,45 +73,45 @@ public class Parser {
 
         switch (cmd) {
         case "bye":
-            return "peace out! see ya later";
+            return "aight Deji, catch you later! stay winning!";
         case "list":
-            return showList(tasks);
+            return formatTaskList(tasks);
         case "mark":
-            return doMark(words, tasks);
+            return handleMark(words, tasks);
         case "unmark":
-            return doUnmark(words, tasks);
+            return handleUnmark(words, tasks);
         case "todo":
-            return doTodo(input, tasks);
+            return handleTodo(input, tasks);
         case "deadline":
-            return doDeadline(input, tasks);
+            return handleDeadline(input, tasks);
         case "event":
-            return doEvent(input, tasks);
+            return handleEvent(input, tasks);
         case "delete":
-            return doDelete(words, tasks);
+            return handleDelete(words, tasks);
         case "on":
-            return doOn(words, tasks);
+            return handleOn(words, tasks);
         case "find":
-            return doFind(input, tasks);
+            return handleFind(input, tasks);
         default:
             return ERR_UNKNOWN;
         }
     }
 
-    private static String showList(TaskList tasks) {
+    private static String formatTaskList(TaskList tasks) {
         if (tasks.size() == 0) {
-            return "no tasks yet! go add some";
+            return "no tasks yet Deji! you're either free or slacking...";
         }
-        StringBuilder sb = new StringBuilder("here's what you got:");
+        StringBuilder sb = new StringBuilder("here's the lineup Deji:");
         for (int i = 0; i < tasks.size(); i++) {
             sb.append("\n").append(i + 1).append(". ").append(tasks.get(i));
         }
         return sb.toString();
     }
 
-    private static String showResults(TaskList results, String header) {
+    private static String formatSearchResults(TaskList results, String header) {
         StringBuilder sb = new StringBuilder(header);
         if (results.size() == 0) {
-            sb.append("\nno matches found");
+            sb.append("\nnah nothing matched fam");
         } else {
             for (int i = 0; i < results.size(); i++) {
                 sb.append("\n").append(i + 1).append(". ").append(results.get(i));
@@ -99,112 +120,176 @@ public class Parser {
         return sb.toString();
     }
 
-    private static String doMark(String[] words, TaskList tasks) {
+    private static String handleMark(String[] words, TaskList tasks) {
+        if (tasks.isEmpty()) {
+            return ERR_EMPTY_LIST;
+        }
         try {
-            int num = Integer.parseInt(words[1]);
-            Task t = tasks.setDone(num - 1);
-            return "nice! marked as done:\n" + t;
+            int taskNum = Integer.parseInt(words[1]);
+            Task t = tasks.setDone(taskNum - 1);
+            return "BIG W Deji! smashed it:\n" + t;
         } catch (NumberFormatException e) {
-            return ERR_BAD_NUM;
+            return ERR_INVALID_NUMBER;
         } catch (IndexOutOfBoundsException | AssertionError e) {
-            return "task number out of range";
+            return "that task number doesn't exist Deji!";
         }
     }
 
-    private static String doUnmark(String[] words, TaskList tasks) {
+    private static String handleUnmark(String[] words, TaskList tasks) {
+        if (tasks.isEmpty()) {
+            return ERR_EMPTY_LIST;
+        }
         try {
-            int num = Integer.parseInt(words[1]);
-            Task t = tasks.setUndone(num - 1);
-            return "ok unmarked this one:\n" + t;
+            int taskNum = Integer.parseInt(words[1]);
+            Task t = tasks.setUndone(taskNum - 1);
+            return "alright Deji, unmarked this one:\n" + t;
         } catch (NumberFormatException e) {
-            return ERR_BAD_NUM;
+            return ERR_INVALID_NUMBER;
         } catch (IndexOutOfBoundsException | AssertionError e) {
-            return "task number out of range";
+            return "that task number doesn't exist Deji!";
         }
     }
 
-    private static String doTodo(String input, TaskList tasks) {
-        String desc = input.substring(TODO_LEN).trim();
+    private static String handleTodo(String input, TaskList tasks) {
+        String desc = input.substring(TODO_PREFIX_LEN).trim();
         if (desc.isEmpty()) {
-            return ERR_EMPTY;
+            return ERR_EMPTY_DESC;
         }
         Task t = new ToDo(desc);
+        if (tasks.hasDuplicate(t)) {
+            return ERR_DUPLICATE;
+        }
         tasks.add(t);
-        return taskAddedMsg(t, tasks.size());
+        return formatTaskAdded(t, tasks.size());
     }
 
-    private static String doDeadline(String input, TaskList tasks) {
-        if (input.length() <= DEADLINE_LEN) {
-            return ERR_DEADLINE_FMT;
+    private static String handleDeadline(String input, TaskList tasks) {
+        if (input.length() <= DEADLINE_PREFIX_LEN) {
+            return ERR_DEADLINE_FORMAT;
         }
-        String rest = input.substring(DEADLINE_LEN).trim();
+        String rest = input.substring(DEADLINE_PREFIX_LEN).trim();
         String[] parts = rest.split(" /by ");
 
-        if (parts.length != 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
-            return ERR_DEADLINE_FMT;
+        if (parts.length != 2) {
+            return ERR_DEADLINE_FORMAT;
         }
 
-        Task t = new Deadline(parts[0].trim(), parts[1].trim());
+        String desc = parts[0].trim();
+        String by = parts[1].trim();
+        if (desc.isEmpty() || by.isEmpty()) {
+            return ERR_DEADLINE_FORMAT;
+        }
+
+        Task t = new Deadline(desc, by);
+        if (tasks.hasDuplicate(t)) {
+            return ERR_DUPLICATE;
+        }
         tasks.add(t);
-        return taskAddedMsg(t, tasks.size());
+        return formatTaskAdded(t, tasks.size());
     }
 
-    private static String doEvent(String input, TaskList tasks) {
-        if (input.length() <= EVENT_LEN) {
-            return ERR_EVENT_FMT;
+    private static String handleEvent(String input, TaskList tasks) {
+        if (input.length() <= EVENT_PREFIX_LEN) {
+            return ERR_EVENT_FORMAT;
         }
-        String rest = input.substring(EVENT_LEN).trim();
+        String rest = input.substring(EVENT_PREFIX_LEN).trim();
         String[] parts = rest.split(" /from | /to ");
 
-        if (parts.length != 3 || parts[0].trim().isEmpty()
-                || parts[1].trim().isEmpty() || parts[2].trim().isEmpty()) {
-            return ERR_EVENT_FMT;
+        if (parts.length != 3) {
+            return ERR_EVENT_FORMAT;
         }
 
-        Task t = new Event(parts[0].trim(), parts[1].trim(), parts[2].trim());
+        String desc = parts[0].trim();
+        String from = parts[1].trim();
+        String to = parts[2].trim();
+        if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            return ERR_EVENT_FORMAT;
+        }
+
+        // validate date order if both are valid dates
+        try {
+            LocalDate startDate = LocalDate.parse(from);
+            LocalDate endDate = LocalDate.parse(to);
+            if (startDate.isAfter(endDate)) {
+                return ERR_EVENT_DATE_ORDER;
+            }
+        } catch (DateTimeParseException e) {
+            // one or both are not dates, skip date order check
+        }
+
+        Task t = new Event(desc, from, to);
+        if (tasks.hasDuplicate(t)) {
+            return ERR_DUPLICATE;
+        }
         tasks.add(t);
-        return taskAddedMsg(t, tasks.size());
+        return formatTaskAdded(t, tasks.size());
     }
 
-    private static String doDelete(String[] words, TaskList tasks) {
+    private static String handleDelete(String[] words, TaskList tasks) {
+        if (tasks.isEmpty()) {
+            return ERR_EMPTY_LIST;
+        }
         try {
             int idx = Integer.parseInt(words[1]);
             Task t = tasks.remove(idx - 1);
-            return "deleted:\n" + t + "\nyou now have " + tasks.size() + " tasks";
+            return "gone and dusted Deji:\n" + t + "\nyou now have " + tasks.size() + " tasks";
         } catch (NumberFormatException e) {
-            return ERR_BAD_NUM;
+            return ERR_INVALID_NUMBER;
         } catch (IndexOutOfBoundsException | AssertionError e) {
-            return "task number out of range";
+            return "that task number doesn't exist Deji!";
         }
     }
 
-    private static String doOn(String[] words, TaskList tasks) {
+    private static String handleOn(String[] words, TaskList tasks) {
         if (words.length < 2) {
-            return ERR_DATE_FMT;
+            return ERR_DATE_FORMAT;
         }
         try {
             LocalDate date = LocalDate.parse(words[1]);
             TaskList filtered = tasks.filterByDate(date);
-            return showResults(filtered, "tasks on " + date + ":");
+            return formatSearchResults(filtered, "tasks on " + date + " Deji:");
         } catch (DateTimeParseException e) {
-            return ERR_DATE_FMT;
+            return ERR_DATE_FORMAT;
         }
     }
 
-    private static String doFind(String input, TaskList tasks) {
-        if (input.length() <= FIND_LEN) {
-            return "find what? give me a keyword";
+    private static String handleFind(String input, TaskList tasks) {
+        if (input.length() <= FIND_PREFIX_LEN) {
+            return "find what Deji? give me a keyword!";
         }
-        String keyword = input.substring(FIND_LEN).trim();
+        String keyword = input.substring(FIND_PREFIX_LEN).trim();
         if (keyword.isEmpty()) {
-            return "find what? give me a keyword";
+            return "find what Deji? give me a keyword!";
         }
         TaskList matches = tasks.search(keyword);
-        return showResults(matches, "found these:");
+        return formatSearchResults(matches, "found these for ya Deji:");
     }
 
-    private static String taskAddedMsg(Task t, int total) {
-        return "added:\n" + t + "\nyou now have " + total + " tasks";
+    private static String formatTaskAdded(Task t, int totalTasks) {
+        return "LESGOOO! added that one Deji:\n" + t
+                + "\nyou now have " + totalTasks + " tasks in the bag!";
+    }
+
+    /**
+     * Checks if a response from processInput is an error message.
+     * Used by the GUI to apply error styling to error responses.
+     *
+     * @param response The response string from processInput.
+     * @return true if the response is an error message.
+     */
+    public static boolean isErrorResponse(String response) {
+        return response.equals(ERR_UNKNOWN)
+                || response.equals(ERR_EMPTY)
+                || response.equals(ERR_EMPTY_DESC)
+                || response.equals(ERR_EMPTY_LIST)
+                || response.equals(ERR_DUPLICATE)
+                || response.equals(ERR_DEADLINE_FORMAT)
+                || response.equals(ERR_EVENT_FORMAT)
+                || response.equals(ERR_EVENT_DATE_ORDER)
+                || response.equals(ERR_DATE_FORMAT)
+                || response.equals(ERR_INVALID_NUMBER)
+                || response.equals("that task number doesn't exist Deji!")
+                || response.equals("find what Deji? give me a keyword!");
     }
 
     /**
@@ -216,11 +301,11 @@ public class Parser {
      * @return false if the user wants to exit (bye), true otherwise.
      */
     public static boolean execute(String input, TaskList tasks, Ui ui) {
-        if (input == null || input.trim().isEmpty()) {
+        input = normalize(input);
+        if (input.isEmpty()) {
             ui.printEmpty();
             return true;
         }
-        input = input.trim();
 
         String[] words = input.split(" ");
         String cmd = words[0].toLowerCase();
@@ -273,92 +358,141 @@ public class Parser {
     }
 
     private static void cliMark(String[] words, TaskList tasks, Ui ui) {
+        if (tasks.isEmpty()) {
+            ui.printError(ERR_EMPTY_LIST);
+            return;
+        }
         try {
             int num = Integer.parseInt(words[1]);
             Task t = tasks.setDone(num - 1);
             ui.printMarked(t);
         } catch (NumberFormatException e) {
-            ui.printError(ERR_BAD_NUM);
+            ui.printError(ERR_INVALID_NUMBER);
         } catch (IndexOutOfBoundsException | AssertionError e) {
-            ui.printError("task number out of range");
+            ui.printError("that task number doesn't exist Deji!");
         }
     }
 
     private static void cliUnmark(String[] words, TaskList tasks, Ui ui) {
+        if (tasks.isEmpty()) {
+            ui.printError(ERR_EMPTY_LIST);
+            return;
+        }
         try {
             int num = Integer.parseInt(words[1]);
             Task t = tasks.setUndone(num - 1);
             ui.printUnmarked(t);
         } catch (NumberFormatException e) {
-            ui.printError(ERR_BAD_NUM);
+            ui.printError(ERR_INVALID_NUMBER);
         } catch (IndexOutOfBoundsException | AssertionError e) {
-            ui.printError("task number out of range");
+            ui.printError("that task number doesn't exist Deji!");
         }
     }
 
     private static void cliTodo(String input, TaskList tasks, Ui ui) {
-        String desc = input.substring(TODO_LEN).trim();
+        String desc = input.substring(TODO_PREFIX_LEN).trim();
         if (desc.isEmpty()) {
-            ui.printError(ERR_EMPTY);
+            ui.printError(ERR_EMPTY_DESC);
             return;
         }
         Task t = new ToDo(desc);
+        if (tasks.hasDuplicate(t)) {
+            ui.printError(ERR_DUPLICATE);
+            return;
+        }
         tasks.add(t);
         ui.printAdded(t, tasks.size());
     }
 
     private static void cliDeadline(String input, TaskList tasks, Ui ui) {
-        if (input.length() <= DEADLINE_LEN) {
-            ui.printError(ERR_DEADLINE_FMT);
+        if (input.length() <= DEADLINE_PREFIX_LEN) {
+            ui.printError(ERR_DEADLINE_FORMAT);
             return;
         }
-        String rest = input.substring(DEADLINE_LEN).trim();
+        String rest = input.substring(DEADLINE_PREFIX_LEN).trim();
         String[] parts = rest.split(" /by ");
 
-        if (parts.length != 2 || parts[0].trim().isEmpty() || parts[1].trim().isEmpty()) {
-            ui.printError(ERR_DEADLINE_FMT);
+        if (parts.length != 2) {
+            ui.printError(ERR_DEADLINE_FORMAT);
             return;
         }
 
-        Task t = new Deadline(parts[0].trim(), parts[1].trim());
+        String desc = parts[0].trim();
+        String by = parts[1].trim();
+        if (desc.isEmpty() || by.isEmpty()) {
+            ui.printError(ERR_DEADLINE_FORMAT);
+            return;
+        }
+
+        Task t = new Deadline(desc, by);
+        if (tasks.hasDuplicate(t)) {
+            ui.printError(ERR_DUPLICATE);
+            return;
+        }
         tasks.add(t);
         ui.printAdded(t, tasks.size());
     }
 
     private static void cliEvent(String input, TaskList tasks, Ui ui) {
-        if (input.length() <= EVENT_LEN) {
-            ui.printError(ERR_EVENT_FMT);
+        if (input.length() <= EVENT_PREFIX_LEN) {
+            ui.printError(ERR_EVENT_FORMAT);
             return;
         }
-        String rest = input.substring(EVENT_LEN).trim();
+        String rest = input.substring(EVENT_PREFIX_LEN).trim();
         String[] parts = rest.split(" /from | /to ");
 
-        if (parts.length != 3 || parts[0].trim().isEmpty()
-                || parts[1].trim().isEmpty() || parts[2].trim().isEmpty()) {
-            ui.printError(ERR_EVENT_FMT);
+        if (parts.length != 3) {
+            ui.printError(ERR_EVENT_FORMAT);
             return;
         }
 
-        Task t = new Event(parts[0].trim(), parts[1].trim(), parts[2].trim());
+        String desc = parts[0].trim();
+        String from = parts[1].trim();
+        String to = parts[2].trim();
+        if (desc.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            ui.printError(ERR_EVENT_FORMAT);
+            return;
+        }
+
+        try {
+            LocalDate startDate = LocalDate.parse(from);
+            LocalDate endDate = LocalDate.parse(to);
+            if (startDate.isAfter(endDate)) {
+                ui.printError(ERR_EVENT_DATE_ORDER);
+                return;
+            }
+        } catch (DateTimeParseException e) {
+            // one or both are not dates, skip date order check
+        }
+
+        Task t = new Event(desc, from, to);
+        if (tasks.hasDuplicate(t)) {
+            ui.printError(ERR_DUPLICATE);
+            return;
+        }
         tasks.add(t);
         ui.printAdded(t, tasks.size());
     }
 
     private static void cliDelete(String[] words, TaskList tasks, Ui ui) {
+        if (tasks.isEmpty()) {
+            ui.printError(ERR_EMPTY_LIST);
+            return;
+        }
         try {
             int idx = Integer.parseInt(words[1]);
             Task t = tasks.remove(idx - 1);
             ui.printDeleted(t, tasks.size());
         } catch (NumberFormatException e) {
-            ui.printError(ERR_BAD_NUM);
+            ui.printError(ERR_INVALID_NUMBER);
         } catch (IndexOutOfBoundsException | AssertionError e) {
-            ui.printError("task number out of range");
+            ui.printError("task number out of range (1-" + tasks.size() + ")");
         }
     }
 
     private static void cliOn(String[] words, TaskList tasks, Ui ui) {
         if (words.length < 2) {
-            ui.printError(ERR_DATE_FMT);
+            ui.printError(ERR_DATE_FORMAT);
             return;
         }
         try {
@@ -366,18 +500,18 @@ public class Parser {
             TaskList filtered = tasks.filterByDate(date);
             ui.printTasksOnDate(filtered, date.toString());
         } catch (DateTimeParseException e) {
-            ui.printError(ERR_DATE_FMT);
+            ui.printError(ERR_DATE_FORMAT);
         }
     }
 
     private static void cliFind(String input, TaskList tasks, Ui ui) {
-        if (input.length() <= FIND_LEN) {
-            ui.printError("find what? give me a keyword");
+        if (input.length() <= FIND_PREFIX_LEN) {
+            ui.printError("find what Deji? give me a keyword!");
             return;
         }
-        String keyword = input.substring(FIND_LEN).trim();
+        String keyword = input.substring(FIND_PREFIX_LEN).trim();
         if (keyword.isEmpty()) {
-            ui.printError("find what? give me a keyword");
+            ui.printError("find what Deji? give me a keyword!");
             return;
         }
         TaskList matches = tasks.search(keyword);

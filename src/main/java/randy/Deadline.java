@@ -2,15 +2,24 @@ package randy;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 
 /**
  * Represents a task with a due date.
- * If the date string is a valid yyyy-MM-dd format, it gets stored as a
- * LocalDate and displayed in a nicer format. Otherwise it stays as a string.
+ * Uses strict date parsing to reject impossible dates like Feb 30.
+ * If the date string is not a valid date, it is stored as-is.
  */
 public class Deadline extends Task {
-    private Object dueDate; // either LocalDate or just the raw String
+    private Object dueDate; // can be LocalDate or String
+
+    /** Strict formatter that rejects invalid dates like 2025-02-30. */
+    private static final DateTimeFormatter STRICT_DATE_FORMAT =
+            new DateTimeFormatterBuilder()
+                    .appendPattern("uuuu-MM-dd")
+                    .toFormatter()
+                    .withResolverStyle(ResolverStyle.STRICT);
 
     /**
      * Creates a new Deadline task.
@@ -20,10 +29,10 @@ public class Deadline extends Task {
      */
     public Deadline(String desc, String by) {
         super(desc);
+        // try parsing as date with strict validation, otherwise keep as string
         try {
-            this.dueDate = LocalDate.parse(by);
+            this.dueDate = LocalDate.parse(by, STRICT_DATE_FORMAT);
         } catch (DateTimeParseException e) {
-            // not a valid date, just store as string
             this.dueDate = by;
         }
     }
@@ -31,12 +40,9 @@ public class Deadline extends Task {
     @Override
     public String toString() {
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MMM dd yyyy");
-        String dateStr;
-        if (dueDate instanceof LocalDate) {
-            dateStr = ((LocalDate) dueDate).format(fmt);
-        } else {
-            dateStr = dueDate.toString();
-        }
+        String dateStr = (dueDate instanceof LocalDate)
+            ? ((LocalDate) dueDate).format(fmt)
+            : dueDate.toString();
         return "[D]" + super.toString() + " (by: " + dateStr + ")";
     }
 

@@ -3,11 +3,11 @@ package randy;
 import java.util.Scanner;
 
 /**
- * Handles all user interface operations for CLI mode,
- * including reading input and printing formatted output.
+ * Handles all user interface operations for CLI mode.
+ * All messages use Vikkstar's energetic YouTuber personality.
  */
 public class Ui {
-    private static final String LINE = "____________________________________________________________";
+    private static final String DIVIDER = "____________________________________________________________";
     private Scanner sc;
 
     /** Initialises the Ui with a Scanner for reading from standard input. */
@@ -24,27 +24,28 @@ public class Ui {
         return sc.nextLine().trim();
     }
 
-    private void divider() {
-        System.out.println("\t" + LINE);
+    private void line() {
+        System.out.println("\t" + DIVIDER);
     }
 
     /** Prints a greeting message. */
     public void greet() {
-        System.out.println(LINE);
-        System.out.println("yo! i'm Randy");
+        System.out.println(DIVIDER);
+        System.out.println("YO WHAT'S GOOD! I'm Vikkstar, your task manager!");
+        System.out.println("let's get productive Deji!");
     }
 
     /** Prints a farewell message. */
     public void sayBye() {
-        System.out.println(LINE);
-        System.out.println("peace out! see ya later");
-        System.out.println(LINE);
+        System.out.println(DIVIDER);
+        System.out.println("aight Deji, catch you later! stay winning!");
+        System.out.println(DIVIDER);
     }
 
     /** Prompts the user for input. */
     public void askForInput() {
-        System.out.println("whatcha need?");
-        System.out.println(LINE);
+        System.out.println("whatcha need fam?");
+        System.out.println(DIVIDER);
     }
 
     /**
@@ -54,12 +55,12 @@ public class Ui {
      */
     public void printSavedTasks(TaskList tasks) {
         if (tasks.size() > 0) {
-            System.out.println("found your saved tasks:");
-            System.out.println(LINE);
+            System.out.println("oi Deji, found your saved tasks:");
+            System.out.println(DIVIDER);
             for (int i = 0; i < tasks.size(); i++) {
                 System.out.println(tasks.get(i));
             }
-            System.out.println(LINE);
+            System.out.println(DIVIDER);
         }
     }
 
@@ -69,23 +70,23 @@ public class Ui {
      * @param msg The error message to display.
      */
     public void printError(String msg) {
-        divider();
+        line();
         System.out.println("\t" + msg);
-        divider();
+        line();
     }
 
     /** Prints an error for unrecognised commands. */
     public void printUnknown() {
-        divider();
-        System.out.println("\thuh? idk what that means bro");
-        divider();
+        line();
+        System.out.println("\tbruv that's not a thing... try again Deji!");
+        line();
     }
 
     /** Prints an error for commands that are missing required details. */
     public void printEmpty() {
-        divider();
-        System.out.println("\tuh you forgot to add details");
-        divider();
+        line();
+        System.out.println("\tyo Deji you forgot the details fam!");
+        line();
     }
 
     /**
@@ -94,12 +95,12 @@ public class Ui {
      * @param tasks The task list to display.
      */
     public void printList(TaskList tasks) {
-        divider();
-        System.out.println("\there's what you got:");
+        line();
+        System.out.println("\there's the lineup Deji:");
         for (int i = 0; i < tasks.size(); i++) {
             System.out.println("\t" + (i + 1) + ". " + tasks.get(i));
         }
-        divider();
+        line();
     }
 
     /**
@@ -108,10 +109,10 @@ public class Ui {
      * @param t The task that was marked.
      */
     public void printMarked(Task t) {
-        divider();
-        System.out.println("\tnice! marked as done:");
+        line();
+        System.out.println("\tBIG W Deji! smashed it:");
         System.out.println("\t" + t);
-        divider();
+        line();
     }
 
     /**
@@ -120,10 +121,10 @@ public class Ui {
      * @param t The task that was unmarked.
      */
     public void printUnmarked(Task t) {
-        divider();
-        System.out.println("\tok unmarked this one:");
+        line();
+        System.out.println("\talright Deji, unmarked this one:");
         System.out.println("\t" + t);
-        divider();
+        line();
     }
 
     /**
@@ -133,11 +134,11 @@ public class Ui {
      * @param total The new total number of tasks.
      */
     public void printAdded(Task t, int total) {
-        divider();
-        System.out.println("\tadded:");
+        line();
+        System.out.println("\tLESGOOO! added that one Deji:");
         System.out.println("\t" + t);
-        System.out.println("\tyou now have " + total + " tasks");
-        divider();
+        System.out.println("\tyou now have " + total + " tasks in the bag!");
+        line();
     }
 
     /**
@@ -147,11 +148,11 @@ public class Ui {
      * @param total The new total number of tasks.
      */
     public void printDeleted(Task t, int total) {
-        divider();
-        System.out.println("\tdeleted:");
+        line();
+        System.out.println("\tgone and dusted Deji:");
         System.out.println("\t" + t);
         System.out.println("\tyou now have " + total + " tasks");
-        divider();
+        line();
     }
 
     /**
@@ -161,21 +162,21 @@ public class Ui {
      * @param date    The date string being queried.
      */
     public void printTasksOnDate(TaskList results, String date) {
-        divider();
-        System.out.println("\ttasks on " + date + ":");
+        line();
+        System.out.println("\ttasks on " + date + " Deji:");
         if (results.size() == 0) {
-            System.out.println("\tnothing on this day");
+            System.out.println("\tnothing on this day fam!");
         } else {
             for (int i = 0; i < results.size(); i++) {
                 System.out.println("\t" + (i + 1) + ". " + results.get(i));
             }
         }
-        divider();
+        line();
     }
 
     /** Prints a message when saved tasks could not be loaded. */
     public void printLoadError() {
-        System.out.println("couldnt load saved tasks, starting fresh");
+        System.out.println("couldn't load saved tasks Deji, starting fresh!");
     }
 
     /**
@@ -184,16 +185,16 @@ public class Ui {
      * @param results The matching tasks.
      */
     public void printSearchResults(TaskList results) {
-        divider();
-        System.out.println("\tfound these:");
+        line();
+        System.out.println("\tfound these for ya Deji:");
         if (results.size() == 0) {
-            System.out.println("\tno matches");
+            System.out.println("\tnah nothing matched fam");
         } else {
             for (int i = 0; i < results.size(); i++) {
                 System.out.println("\t" + (i + 1) + ". " + results.get(i));
             }
         }
-        divider();
+        line();
     }
 
     /** Closes the Scanner resource. */

@@ -13,10 +13,12 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.shape.Circle;
 
 /**
  * Represents a single chat bubble in the GUI conversation.
- * Contains a text label and a profile picture ImageView.
+ * Displays a message with a profile picture, styled differently
+ * for user messages, bot messages, and error messages.
  */
 public class DialogBox extends HBox {
     @FXML
@@ -36,9 +38,20 @@ public class DialogBox extends HBox {
 
         text.setText(msg);
         pic.setImage(img);
+        clipImageToCircle();
     }
 
-    // flips the children so pic goes on the left side (for randy's messages)
+    /**
+     * Clips the profile image into a circle shape for a cleaner look.
+     */
+    private void clipImageToCircle() {
+        Circle clip = new Circle(20, 20, 20);
+        pic.setClip(clip);
+    }
+
+    /**
+     * Flips the dialog box so the picture appears on the left (for bot replies).
+     */
     private void flip() {
         ObservableList<Node> kids = FXCollections.observableArrayList(this.getChildren());
         Collections.reverse(kids);
@@ -54,7 +67,10 @@ public class DialogBox extends HBox {
      * @return A new DialogBox styled for the user.
      */
     public static DialogBox forUser(String msg, Image img) {
-        return new DialogBox(msg, img);
+        DialogBox box = new DialogBox(msg, img);
+        box.text.getStyleClass().add("user-bubble");
+        box.getStyleClass().add("user-dialog");
+        return box;
     }
 
     /**
@@ -62,10 +78,28 @@ public class DialogBox extends HBox {
      *
      * @param msg The response text.
      * @param img Randy's profile image.
-     * @return A new DialogBox styled for Randy.
+     * @return A new DialogBox styled for the bot.
      */
     public static DialogBox forRandy(String msg, Image img) {
         DialogBox box = new DialogBox(msg, img);
+        box.text.getStyleClass().add("bot-bubble");
+        box.getStyleClass().add("bot-dialog");
+        box.flip();
+        return box;
+    }
+
+    /**
+     * Creates a dialog box for error messages, left-aligned with red error styling
+     * to draw the user's attention to mistakes.
+     *
+     * @param msg The error message text.
+     * @param img The bot's profile image.
+     * @return A styled DialogBox with error highlighting.
+     */
+    public static DialogBox forError(String msg, Image img) {
+        DialogBox box = new DialogBox(msg, img);
+        box.text.getStyleClass().add("error-bubble");
+        box.getStyleClass().add("bot-dialog");
         box.flip();
         return box;
     }

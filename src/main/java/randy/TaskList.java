@@ -127,12 +127,42 @@ public class TaskList {
         if (keyword == null || keyword.trim().isEmpty()) {
             return matches;
         }
-        String lower = keyword.toLowerCase();
+        String lowerKeyword = keyword.toLowerCase();
         for (Task t : tasks) {
-            if (t.toString().toLowerCase().contains(lower)) {
+            if (t.toString().toLowerCase().contains(lowerKeyword)) {
                 matches.add(t);
             }
         }
         return matches;
+    }
+
+    /**
+     * Checks if index is within valid range.
+     *
+     * @param idx The index to check.
+     * @return true if the index is valid.
+     */
+    private boolean isValidIndex(int idx) {
+        return idx >= 0 && idx < tasks.size();
+    }
+
+    /**
+     * Checks if an identical task already exists in the list.
+     * Comparison is based on the string representation of the task.
+     *
+     * @param task The task to check for duplicates.
+     * @return true if a task with the same string representation exists.
+     */
+    public boolean hasDuplicate(Task task) {
+        if (task == null) {
+            return false;
+        }
+        String taskStr = task.toString();
+        for (Task t : tasks) {
+            if (t.toString().equals(taskStr)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

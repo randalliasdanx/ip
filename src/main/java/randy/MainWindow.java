@@ -10,7 +10,7 @@ import javafx.scene.layout.VBox;
 
 /**
  * Controller for the main chat window in the GUI.
- * Handles user input and displays the conversation between the user and Randy.
+ * Displays Vikkstar (bot) and Deji (user) conversation.
  */
 public class MainWindow extends AnchorPane {
     @FXML
@@ -24,15 +24,18 @@ public class MainWindow extends AnchorPane {
 
     private Randy randy;
 
-    private Image userPic = new Image(this.getClass().getResourceAsStream("/images/DaUser.png"));
-    private Image randyPic = new Image(this.getClass().getResourceAsStream("/images/DaRandy.png"));
+    private Image dejiPic = new Image(this.getClass().getResourceAsStream("/images/DaUser.png"));
+    private Image vikkstarPic = new Image(this.getClass().getResourceAsStream("/images/DaRandy.png"));
 
     /** Initialises the controller, binds scroll and displays the welcome message. */
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(chatBox.heightProperty());
+        // Vikkstar welcome msg
         chatBox.getChildren().add(
-            DialogBox.forRandy("yo! i'm Randy\nwhatcha need?", randyPic)
+            DialogBox.forRandy(
+                "YO WHAT'S GOOD! I'm Vikkstar, your task manager!\nlet's get productive Deji!",
+                vikkstarPic)
         );
     }
 
@@ -52,10 +55,16 @@ public class MainWindow extends AnchorPane {
             return; // dont send blank messages
         }
         String response = randy.getResponse(input);
-        chatBox.getChildren().addAll(
-            DialogBox.forUser(input, userPic),
-            DialogBox.forRandy(response, randyPic)
-        );
+
+        chatBox.getChildren().add(DialogBox.forUser(input, dejiPic));
+
+        // use error styling if the response is an error message
+        if (Parser.isErrorResponse(response)) {
+            chatBox.getChildren().add(DialogBox.forError(response, vikkstarPic));
+        } else {
+            chatBox.getChildren().add(DialogBox.forRandy(response, vikkstarPic));
+        }
+
         inputField.clear();
     }
 }
