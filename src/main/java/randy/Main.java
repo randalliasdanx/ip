@@ -24,7 +24,7 @@ public class Main extends Application {
             Scene scene = new Scene(root);
             scene.getStylesheets().add(Main.class.getResource("/view/styles.css").toExternalForm());
             stage.setScene(scene);
-            stage.setTitle("Randy");
+            stage.setTitle("Vikkstar Task Manager");
             stage.setMinHeight(220);
             stage.setMinWidth(300);
             stage.setResizable(true);
