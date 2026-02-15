@@ -9,8 +9,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
 /**
- * Controller for the main chat window.
- * Manages the chat display, user input, and interaction with the Randy bot.
+ * Controller for main chat window.
+ * Displays Vikkstar (bot) and Deji (user) conversation.
  */
 public class MainWindow extends AnchorPane {
     @FXML
@@ -24,15 +24,17 @@ public class MainWindow extends AnchorPane {
 
     private Randy randy;
 
-    private Image userPic = new Image(this.getClass().getResourceAsStream("/images/DaUser.png"));
-    private Image randyPic = new Image(this.getClass().getResourceAsStream("/images/DaRandy.png"));
+    private Image dejiPic = new Image(this.getClass().getResourceAsStream("/images/DaUser.png"));
+    private Image vikkstarPic = new Image(this.getClass().getResourceAsStream("/images/DaRandy.png"));
 
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(chatBox.heightProperty());
-        // welcome msg
+        // Vikkstar welcome msg
         chatBox.getChildren().add(
-            DialogBox.forRandy("yo! i'm Randy\nwhatcha need?", randyPic)
+            DialogBox.forRandy(
+                "YO WHAT'S GOOD! I'm Vikkstar, your task manager!\nlet's get productive Deji!",
+                vikkstarPic)
         );
     }
 
@@ -56,6 +58,10 @@ public class MainWindow extends AnchorPane {
             chatBox.getChildren().add(DialogBox.forRandy(response, randyPic));
         }
 
+        chatBox.getChildren().addAll(
+            DialogBox.forUser(input, dejiPic),
+            DialogBox.forRandy(response, vikkstarPic)
+        );
         inputField.clear();
     }
 }
