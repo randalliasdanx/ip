@@ -30,6 +30,25 @@ public class Randy {
     }
 
     /**
+     * Returns the welcome message including any saved tasks.
+     * Called by the GUI on startup to show the initial greeting.
+     *
+     * @return The welcome message with saved tasks if any.
+     */
+    public String getWelcome() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("YO WHAT'S GOOD! I'm Vikkstar, your task manager!");
+        sb.append("\nlet's get productive Deji!");
+        if (tasks.size() > 0) {
+            sb.append("\n\noi Deji, found your saved tasks:");
+            for (int i = 0; i < tasks.size(); i++) {
+                sb.append("\n").append(i + 1).append(". ").append(tasks.get(i));
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
      * Processes user input and returns a response string.
      * Called by the GUI to get Randy's reply.
      *

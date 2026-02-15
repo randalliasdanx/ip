@@ -27,25 +27,23 @@ public class MainWindow extends AnchorPane {
     private Image dejiPic = new Image(this.getClass().getResourceAsStream("/images/DaUser.png"));
     private Image vikkstarPic = new Image(this.getClass().getResourceAsStream("/images/DaRandy.png"));
 
-    /** Initialises the controller, binds scroll and displays the welcome message. */
+    /** Initialises the controller and binds the scroll pane. */
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(chatBox.heightProperty());
-        // Vikkstar welcome msg
-        chatBox.getChildren().add(
-            DialogBox.forRandy(
-                "YO WHAT'S GOOD! I'm Vikkstar, your task manager!\nlet's get productive Deji!",
-                vikkstarPic)
-        );
     }
 
     /**
-     * Sets the Randy instance for this controller to use.
+     * Sets the Randy instance and displays the welcome message with saved tasks.
      *
      * @param r The Randy instance.
      */
     public void setRandy(Randy r) {
         randy = r;
+        // show welcome + saved tasks now that we have access to the task list
+        chatBox.getChildren().add(
+            DialogBox.forRandy(randy.getWelcome(), vikkstarPic)
+        );
     }
 
     @FXML
