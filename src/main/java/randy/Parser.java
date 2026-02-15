@@ -5,6 +5,20 @@ import java.time.format.DateTimeParseException;
 
 /**
  * Parses user input and executes the appropriate command.
+ * 
+ * This class handles command parsing and execution for both CLI and GUI modes.
+ * It validates user input and delegates task operations to the TaskList.
+ * 
+ * Supported commands:
+ * - todo: Add a new todo task
+ * - deadline: Add a task with a due date
+ * - event: Add a task with date range
+ * - mark/unmark: Toggle task completion status
+ * - delete: Remove a task
+ * - list: Display all tasks
+ * - find: Search for tasks by keyword
+ * - on: Filter tasks by date
+ * - bye: Exit the application
  */
 public class Parser {
     
@@ -21,6 +35,11 @@ public class Parser {
     private static final String ERR_EVENT_FORMAT = "format: event <task> /from <start> /to <end>";
     private static final String ERR_DATE_FORMAT = "use format: on yyyy-MM-dd";
     private static final String ERR_INVALID_NUMBER = "please enter a valid task number";
+    
+    // Success messages
+    private static final String SUCCESS_MARK = "nice! marked as done:";
+    private static final String SUCCESS_UNMARK = "ok unmarked this one:";
+    private static final String BYE_MESSAGE = "peace out! see ya later";
     
     /**
      * Processes user input and returns response string (for GUI).
