@@ -4,27 +4,31 @@ import java.util.ArrayList;
 import java.time.LocalDate;
 
 /**
- * Manages a collection of tasks with add, remove, and search operations.
+ * Manages a list of tasks with add, remove, search, and filter operations.
  */
 public class TaskList {
     private ArrayList<Task> tasks;
 
-    /**
-     * Creates an empty task list.
-     */
+    /** Creates an empty task list. */
     public TaskList() {
         tasks = new ArrayList<>();
     }
 
     /**
-     * Creates a task list from existing tasks.
+     * Creates a task list from a pre-existing ArrayList of tasks.
+     *
+     * @param loadedTasks The tasks to initialise the list with.
      */
     public TaskList(ArrayList<Task> loadedTasks) {
         assert loadedTasks != null : "loaded tasks should not be null";
         this.tasks = loadedTasks;
     }
 
-    // varargs - can pass 1 or more tasks: add(task1) or add(task1, task2, task3)
+    /**
+     * Adds one or more tasks to the list (varargs).
+     *
+     * @param newTasks The task(s) to add.
+     */
     public void add(Task... newTasks) {
         for (Task t : newTasks) {
             assert t != null : "task to add should not be null";
@@ -34,6 +38,9 @@ public class TaskList {
 
     /**
      * Removes and returns the task at the given index.
+     *
+     * @param idx Zero-based index of the task to remove.
+     * @return The removed task.
      */
     public Task remove(int idx) {
         assert idx >= 0 && idx < tasks.size() : "index out of bounds";
@@ -42,28 +49,30 @@ public class TaskList {
 
     /**
      * Returns the task at the given index.
+     *
+     * @param idx Zero-based index.
+     * @return The task at that index.
      */
     public Task get(int idx) {
         assert idx >= 0 && idx < tasks.size() : "index out of bounds";
         return tasks.get(idx);
     }
 
-    /**
-     * Returns the number of tasks.
-     */
+    /** Returns the number of tasks in the list. */
     public int size() {
         return tasks.size();
     }
 
-    /**
-     * Checks if task list is empty.
-     */
+    /** Returns true if the task list is empty. */
     public boolean isEmpty() {
         return tasks.isEmpty();
     }
 
     /**
-     * Marks task at index as done and returns it.
+     * Marks the task at the given index as done.
+     *
+     * @param idx Zero-based index.
+     * @return The task that was marked.
      */
     public Task setDone(int idx) {
         assert idx >= 0 && idx < tasks.size() : "index out of bounds";
@@ -73,7 +82,10 @@ public class TaskList {
     }
 
     /**
-     * Marks task at index as not done and returns it.
+     * Marks the task at the given index as not done.
+     *
+     * @param idx Zero-based index.
+     * @return The task that was unmarked.
      */
     public Task setUndone(int idx) {
         assert idx >= 0 && idx < tasks.size() : "index out of bounds";
@@ -83,7 +95,10 @@ public class TaskList {
     }
 
     /**
-     * Returns tasks occurring on the given date.
+     * Returns a new TaskList containing only tasks that fall on the given date.
+     *
+     * @param date The date to filter by.
+     * @return A TaskList of matching tasks.
      */
     public TaskList filterByDate(LocalDate date) {
         assert date != null : "date should not be null";
@@ -100,7 +115,11 @@ public class TaskList {
     }
 
     /**
-     * Returns tasks containing the keyword (case-insensitive).
+     * Searches for tasks whose string representation contains the keyword.
+     * Matching is case-insensitive.
+     *
+     * @param keyword The keyword to search for.
+     * @return A TaskList of matching tasks.
      */
     public TaskList search(String keyword) {
         assert keyword != null : "keyword should not be null";
@@ -108,19 +127,12 @@ public class TaskList {
         if (keyword == null || keyword.trim().isEmpty()) {
             return matches;
         }
-        String lowerKeyword = keyword.toLowerCase();
+        String lower = keyword.toLowerCase();
         for (Task t : tasks) {
-            if (t.toString().toLowerCase().contains(lowerKeyword)) {
+            if (t.toString().toLowerCase().contains(lower)) {
                 matches.add(t);
             }
         }
         return matches;
-    }
-
-    /**
-     * Checks if index is within valid range.
-     */
-    private boolean isValidIndex(int idx) {
-        return idx >= 0 && idx < tasks.size();
     }
 }

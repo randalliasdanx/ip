@@ -15,7 +15,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 
 /**
- * Chat bubble with pic and text.
+ * Represents a single chat bubble in the GUI conversation.
+ * Contains a text label and a profile picture ImageView.
  */
 public class DialogBox extends HBox {
     @FXML
@@ -37,18 +38,32 @@ public class DialogBox extends HBox {
         pic.setImage(img);
     }
 
-    // flip so pic is on left (for Randy's replies)
+    // flips the children so pic goes on the left side (for randy's messages)
     private void flip() {
-        ObservableList<Node> children = FXCollections.observableArrayList(this.getChildren());
-        Collections.reverse(children);
-        getChildren().setAll(children);
+        ObservableList<Node> kids = FXCollections.observableArrayList(this.getChildren());
+        Collections.reverse(kids);
+        getChildren().setAll(kids);
         setAlignment(Pos.TOP_LEFT);
     }
 
+    /**
+     * Creates a dialog box for the user's message (right-aligned).
+     *
+     * @param msg The message text.
+     * @param img The user's profile image.
+     * @return A new DialogBox styled for the user.
+     */
     public static DialogBox forUser(String msg, Image img) {
         return new DialogBox(msg, img);
     }
 
+    /**
+     * Creates a dialog box for Randy's reply (left-aligned, flipped).
+     *
+     * @param msg The response text.
+     * @param img Randy's profile image.
+     * @return A new DialogBox styled for Randy.
+     */
     public static DialogBox forRandy(String msg, Image img) {
         DialogBox box = new DialogBox(msg, img);
         box.flip();

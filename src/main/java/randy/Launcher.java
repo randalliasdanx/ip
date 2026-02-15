@@ -3,7 +3,8 @@ package randy;
 import javafx.application.Application;
 
 /**
- * Entry point - needed to avoid some JavaFX classpath weirdness.
+ * Entry point for the application.
+ * Separate from Main to work around JavaFX classpath issues.
  */
 public class Launcher {
     public static void main(String[] args) {

@@ -9,7 +9,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 
 /**
- * Controller for main chat window.
+ * Controller for the main chat window in the GUI.
+ * Handles user input and displays the conversation between the user and Randy.
  */
 public class MainWindow extends AnchorPane {
     @FXML
@@ -26,15 +27,20 @@ public class MainWindow extends AnchorPane {
     private Image userPic = new Image(this.getClass().getResourceAsStream("/images/DaUser.png"));
     private Image randyPic = new Image(this.getClass().getResourceAsStream("/images/DaRandy.png"));
 
+    /** Initialises the controller, binds scroll and displays the welcome message. */
     @FXML
     public void initialize() {
         scrollPane.vvalueProperty().bind(chatBox.heightProperty());
-        // welcome msg
         chatBox.getChildren().add(
             DialogBox.forRandy("yo! i'm Randy\nwhatcha need?", randyPic)
         );
     }
 
+    /**
+     * Sets the Randy instance for this controller to use.
+     *
+     * @param r The Randy instance.
+     */
     public void setRandy(Randy r) {
         randy = r;
     }
@@ -42,6 +48,9 @@ public class MainWindow extends AnchorPane {
     @FXML
     private void handleSend() {
         String input = inputField.getText();
+        if (input == null || input.trim().isEmpty()) {
+            return; // dont send blank messages
+        }
         String response = randy.getResponse(input);
         chatBox.getChildren().addAll(
             DialogBox.forUser(input, userPic),

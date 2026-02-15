@@ -9,7 +9,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 /**
- * Main GUI app.
+ * JavaFX Application class that launches the Randy GUI window.
  */
 public class Main extends Application {
 
