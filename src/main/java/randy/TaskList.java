@@ -123,4 +123,24 @@ public class TaskList {
     private boolean isValidIndex(int idx) {
         return idx >= 0 && idx < tasks.size();
     }
+
+    /**
+     * Checks if an identical task already exists in the list.
+     * Comparison is based on the string representation of the task.
+     *
+     * @param task the task to check for duplicates
+     * @return true if a task with the same string representation exists
+     */
+    public boolean hasDuplicate(Task task) {
+        if (task == null) {
+            return false;
+        }
+        String taskStr = task.toString();
+        for (Task t : tasks) {
+            if (t.toString().equals(taskStr)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
