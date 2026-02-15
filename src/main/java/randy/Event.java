@@ -2,25 +2,35 @@ package randy;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
+import java.time.format.ResolverStyle;
 
 /**
  * Task that spans a time range.
+ * Uses strict date parsing to reject impossible dates like Feb 30.
  */
 public class Event extends Task {
     private Object from;
     private Object to;
 
+    /** Strict formatter that rejects invalid dates like 2025-02-30. */
+    private static final DateTimeFormatter STRICT_DATE_FORMAT =
+            new DateTimeFormatterBuilder()
+                    .appendPattern("uuuu-MM-dd")
+                    .toFormatter()
+                    .withResolverStyle(ResolverStyle.STRICT);
+
     public Event(String desc, String from, String to) {
         super(desc);
-        // parse dates if possible
+        // parse dates with strict validation if possible
         try {
-            this.from = LocalDate.parse(from);
+            this.from = LocalDate.parse(from, STRICT_DATE_FORMAT);
         } catch (DateTimeParseException e) {
             this.from = from;
         }
         try {
-            this.to = LocalDate.parse(to);
+            this.to = LocalDate.parse(to, STRICT_DATE_FORMAT);
         } catch (DateTimeParseException e) {
             this.to = to;
         }
