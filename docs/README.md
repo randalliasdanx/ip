@@ -1,41 +1,42 @@
 # Randy
 
-Randy is a desktop task manager app that keeps track of your todos, deadlines, and events.
-It works through a chat interface -- just type a command and Randy responds. Randy goes by the
-persona **Vikkstar** and will refer to you as **Deji** (yes it's a bit extra but that's the vibe).
+Randy is your personal task manager that lives in a chat window. Keep track of your
+todos, deadlines, and events by just typing commands. Randy goes by the persona
+**Vikkstar** and calls you **Deji** -- it's a whole vibe.
 
 ![Product Screenshot](Ui.png)
 
 ## Quick Start
 
-1. Make sure you have **Java 17** installed.
-2. Download `randy.jar` from the [releases page](https://github.com/randalliasdanx/ip/releases).
-3. Copy it to a folder you want to use.
-4. Open a terminal, `cd` into that folder, and run:
+1. Make sure you have **Java 17** installed on your machine.
+2. Download the latest `randy.jar` from the [releases page](https://github.com/randalliasdanx/ip/releases).
+3. Copy the jar to whatever folder you want to use as your working directory.
+4. Open a terminal, navigate to that folder, and run:
    ```
    java -jar randy.jar
    ```
-5. The chat window should pop up. Type a command and press Enter or click Send.
+5. A chat window will appear with a welcome message. If you had tasks saved from before,
+   they show up in that first message too.
+6. Type a command in the text field and press Enter (or click Send).
 
-## Command Format
+## Command Format Notes
 
-- Words in `UPPER_CASE` are parameters you fill in yourself.
-  e.g. `todo DESCRIPTION` means you type something like `todo buy groceries`.
-- Dates should be in `yyyy-MM-dd` format (e.g. `2025-03-15`). If you type an invalid
-  date like `2025-02-30`, it won't be recognised as a date.
-- Commands are **not** case-sensitive. `TODO`, `Todo`, and `todo` all work.
+- Words in `UPPER_CASE` are parameters you need to supply.
+  For example, `todo DESCRIPTION` means you type something like `todo buy groceries`.
+- Dates must be in `yyyy-MM-dd` format (e.g. `2025-03-15`). Fake dates like `2025-02-30`
+  will be rejected.
+- Commands are **case-insensitive** -- `TODO`, `Todo`, and `todo` all do the same thing.
 
 ## Features
 
 ### Adding a todo: `todo`
 
-Adds a task with just a description (no date).
+Creates a simple task with no date attached.
 
 Format: `todo DESCRIPTION`
 
 Example: `todo read chapter 5`
 
-Expected output:
 ```
 LESGOOO! added that one Deji:
 [T][ ] read chapter 5
@@ -44,13 +45,13 @@ you now have 1 tasks in the bag!
 
 ### Adding a deadline: `deadline`
 
-Adds a task with a due date. If the date is valid, Randy formats it nicely.
+Creates a task with a due date. Valid dates get formatted into a readable form
+(e.g. `2025-03-20` becomes `Mar 20 2025`).
 
 Format: `deadline DESCRIPTION /by DATE`
 
 Example: `deadline submit essay /by 2025-03-20`
 
-Expected output:
 ```
 LESGOOO! added that one Deji:
 [D][ ] submit essay (by: Mar 20 2025)
@@ -59,28 +60,24 @@ you now have 2 tasks in the bag!
 
 ### Adding an event: `event`
 
-Adds a task that spans a date range.
+Creates a task that spans a date range. The start date must not be after the end date.
 
 Format: `event DESCRIPTION /from START /to END`
 
 Example: `event hackathon /from 2025-04-01 /to 2025-04-03`
 
-Expected output:
 ```
 LESGOOO! added that one Deji:
 [E][ ] hackathon (from: Apr 01 2025 to: Apr 03 2025)
 you now have 3 tasks in the bag!
 ```
 
-> **Note:** If the start date is after the end date, Randy will reject the command.
-
 ### Listing all tasks: `list`
 
-Shows everything you currently have.
+Prints out all your tasks in numbered order.
 
 Format: `list`
 
-Expected output:
 ```
 here's the lineup Deji:
 1. [T][ ] read chapter 5
@@ -90,13 +87,12 @@ here's the lineup Deji:
 
 ### Marking a task as done: `mark`
 
-Marks a task as completed. The `[ ]` becomes `[X]`.
+Ticks off a task. The `[ ]` changes to `[X]`.
 
 Format: `mark INDEX`
 
 Example: `mark 1`
 
-Expected output:
 ```
 BIG W Deji! smashed it:
 [T][X] read chapter 5
@@ -104,13 +100,12 @@ BIG W Deji! smashed it:
 
 ### Unmarking a task: `unmark`
 
-Sets a task back to not done.
+Unticks a task so it goes back to not done.
 
 Format: `unmark INDEX`
 
 Example: `unmark 1`
 
-Expected output:
 ```
 alright Deji, unmarked this one:
 [T][ ] read chapter 5
@@ -118,13 +113,12 @@ alright Deji, unmarked this one:
 
 ### Deleting a task: `delete`
 
-Removes a task from the list entirely.
+Permanently removes a task from the list.
 
 Format: `delete INDEX`
 
 Example: `delete 2`
 
-Expected output:
 ```
 gone and dusted Deji:
 [D][ ] submit essay (by: Mar 20 2025)
@@ -133,13 +127,12 @@ you now have 2 tasks
 
 ### Finding tasks by keyword: `find`
 
-Searches your tasks for a keyword. Case-insensitive.
+Searches all your tasks for a keyword (case-insensitive).
 
 Format: `find KEYWORD`
 
 Example: `find chapter`
 
-Expected output:
 ```
 found these for ya Deji:
 1. [T][ ] read chapter 5
@@ -147,14 +140,12 @@ found these for ya Deji:
 
 ### Filtering tasks by date: `on`
 
-Shows tasks that fall on a specific date. For deadlines, it checks the due date.
-For events, it checks if the date is within the start-to-end range.
+Shows deadlines due on that date, and events whose range covers that date.
 
 Format: `on DATE`
 
 Example: `on 2025-04-02`
 
-Expected output:
 ```
 tasks on 2025-04-02 Deji:
 1. [E][ ] hackathon (from: Apr 01 2025 to: Apr 03 2025)
