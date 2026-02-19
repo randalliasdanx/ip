@@ -177,6 +177,29 @@ Your tasks get saved automatically to `./data/storage.txt` after every command.
 If this file is missing when you open Randy, it just starts with an empty list.
 If a line in the file is corrupted, Randy skips that line and loads the rest.
 
+## FAQ
+
+**Q: What date formats does Randy accept?**
+
+Only `yyyy-MM-dd` (e.g. `2025-03-15`). Anything else gets stored as plain text
+and won't show up when you filter by date with the `on` command.
+
+**Q: What happens if I close the app without typing `bye`?**
+
+Your tasks are saved after every command, so nothing is lost. The `bye` command
+is just a clean way to close the window.
+
+**Q: Can I edit the data file directly?**
+
+You can, but be careful. The file lives at `./data/storage.txt` relative to where
+you launched the jar. If you mess up the formatting, Randy will skip the corrupted
+lines and load whatever it can.
+
+**Q: I added a duplicate task by accident. Will Randy stop me?**
+
+Yes. If you try to add a task with the exact same description and dates as one that
+already exists, Randy will tell you it's a duplicate and won't add it.
+
 ## Command Summary
 
 | Command | Format | Example |
