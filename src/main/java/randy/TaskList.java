@@ -43,7 +43,7 @@ public class TaskList {
      * @return The removed task.
      */
     public Task remove(int idx) {
-        assert idx >= 0 && idx < tasks.size() : "index out of bounds";
+        assert isValidIndex(idx) : "index out of bounds";
         return tasks.remove(idx);
     }
 
@@ -54,7 +54,7 @@ public class TaskList {
      * @return The task at that index.
      */
     public Task get(int idx) {
-        assert idx >= 0 && idx < tasks.size() : "index out of bounds";
+        assert isValidIndex(idx) : "index out of bounds";
         return tasks.get(idx);
     }
 
@@ -75,7 +75,7 @@ public class TaskList {
      * @return The task that was marked.
      */
     public Task setDone(int idx) {
-        assert idx >= 0 && idx < tasks.size() : "index out of bounds";
+        assert isValidIndex(idx) : "index out of bounds";
         Task t = tasks.get(idx);
         t.setDone();
         return t;
@@ -88,7 +88,7 @@ public class TaskList {
      * @return The task that was unmarked.
      */
     public Task setUndone(int idx) {
-        assert idx >= 0 && idx < tasks.size() : "index out of bounds";
+        assert isValidIndex(idx) : "index out of bounds";
         Task t = tasks.get(idx);
         t.setUndone();
         return t;
@@ -103,9 +103,6 @@ public class TaskList {
     public TaskList filterByDate(LocalDate date) {
         assert date != null : "date should not be null";
         TaskList filtered = new TaskList();
-        if (date == null) {
-            return filtered;
-        }
         for (Task t : tasks) {
             if (t.isOnDate(date)) {
                 filtered.add(t);
@@ -124,7 +121,7 @@ public class TaskList {
     public TaskList search(String keyword) {
         assert keyword != null : "keyword should not be null";
         TaskList matches = new TaskList();
-        if (keyword == null || keyword.trim().isEmpty()) {
+        if (keyword.trim().isEmpty()) {
             return matches;
         }
         String lowerKeyword = keyword.toLowerCase();
