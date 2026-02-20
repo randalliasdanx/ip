@@ -1,5 +1,7 @@
 package randy;
 
+import java.util.Arrays;
+
 /**
  * Enum of all valid command keywords that Randy recognises.
  */
@@ -13,11 +15,7 @@ public enum Prefix {
      * @return true if it matches a known command.
      */
     public static boolean contains(String s) {
-        for (Prefix p : Prefix.values()) {
-            if (p.name().equalsIgnoreCase(s)) {
-                return true;
-            }
-        }
-        return false;
+        return Arrays.stream(Prefix.values())
+                .anyMatch(p -> p.name().equalsIgnoreCase(s));
     }
 }
