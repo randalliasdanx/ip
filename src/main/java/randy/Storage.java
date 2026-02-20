@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * Uses try-with-resources for safe I/O and handles corrupted data gracefully.
  */
 public class Storage {
-    private String filepath;
+    private final String filepath;
 
     /**
      * Creates a Storage instance for the given file path.
