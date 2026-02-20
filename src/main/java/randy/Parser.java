@@ -98,7 +98,7 @@ public class Parser {
     }
 
     private static String formatTaskList(TaskList tasks) {
-        if (tasks.size() == 0) {
+        if (tasks.isEmpty()) {
             return "no tasks yet Deji! you're either free or slacking...";
         }
         StringBuilder sb = new StringBuilder("here's the lineup Deji:");
@@ -110,7 +110,7 @@ public class Parser {
 
     private static String formatSearchResults(TaskList results, String header) {
         StringBuilder sb = new StringBuilder(header);
-        if (results.size() == 0) {
+        if (results.isEmpty()) {
             sb.append("\nnah nothing matched fam");
         } else {
             for (int i = 0; i < results.size(); i++) {

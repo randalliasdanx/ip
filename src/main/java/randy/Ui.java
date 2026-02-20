@@ -54,7 +54,7 @@ public class Ui {
      * @param tasks The loaded task list.
      */
     public void printSavedTasks(TaskList tasks) {
-        if (tasks.size() > 0) {
+        if (!tasks.isEmpty()) {
             System.out.println("oi Deji, found your saved tasks:");
             System.out.println(DIVIDER);
             for (int i = 0; i < tasks.size(); i++) {
@@ -164,7 +164,7 @@ public class Ui {
     public void printTasksOnDate(TaskList results, String date) {
         line();
         System.out.println("\ttasks on " + date + " Deji:");
-        if (results.size() == 0) {
+        if (results.isEmpty()) {
             System.out.println("\tnothing on this day fam!");
         } else {
             for (int i = 0; i < results.size(); i++) {
@@ -187,7 +187,7 @@ public class Ui {
     public void printSearchResults(TaskList results) {
         line();
         System.out.println("\tfound these for ya Deji:");
-        if (results.size() == 0) {
+        if (results.isEmpty()) {
             System.out.println("\tnah nothing matched fam");
         } else {
             for (int i = 0; i < results.size(); i++) {
