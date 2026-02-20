@@ -2,6 +2,7 @@ package randy;
 
 import java.util.ArrayList;
 import java.time.LocalDate;
+import java.util.stream.Collectors;
 
 /**
  * Manages a list of tasks with add, remove, search, and filter operations.
@@ -120,17 +121,14 @@ public class TaskList {
      */
     public TaskList search(String keyword) {
         assert keyword != null : "keyword should not be null";
-        TaskList matches = new TaskList();
         if (keyword.trim().isEmpty()) {
-            return matches;
+            return new TaskList();
         }
         String lowerKeyword = keyword.toLowerCase();
-        for (Task t : tasks) {
-            if (t.toString().toLowerCase().contains(lowerKeyword)) {
-                matches.add(t);
-            }
-        }
-        return matches;
+        ArrayList<Task> matched = tasks.stream()
+                .filter(t -> t.toString().toLowerCase().contains(lowerKeyword))
+                .collect(Collectors.toCollection(ArrayList::new));
+        return new TaskList(matched);
     }
 
     /**
@@ -155,11 +153,6 @@ public class TaskList {
             return false;
         }
         String taskStr = task.toString();
-        for (Task t : tasks) {
-            if (t.toString().equals(taskStr)) {
-                return true;
-            }
-        }
-        return false;
+        return tasks.stream().anyMatch(t -> t.toString().equals(taskStr));
     }
 }
